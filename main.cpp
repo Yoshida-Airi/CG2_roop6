@@ -168,9 +168,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE))
 		{
 			//採用したアダプタの情報をログに出力。wstringの方なので注意
-			Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+			Log(std::format("Use Adapter:{}\n", adapterDesc.Description));
+			break;
 		}
+		useAdapter = nullptr;//ソフトウェアアダプタの場合はみなかったことにする
 	}
+	//適切なアダプタが見付らなかったので起動できない
+	assert(useAdapter != nullptr);
 
 
 
