@@ -190,6 +190,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
+	//コマンドキューを生成する
+	ID3D12CommandQueue* commandQueue = nullptr;
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
+	//コマンドキューの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	
+
+	//コマンドアロケータを生成する
+	ID3D12CommandAllocator* commandAllocator = nullptr;
+	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	//コマンドアロケータの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	//コマンドリストを生成する
+	ID3D12GraphicsCommandList* commandList = nullptr;
+	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr, IID_PPV_ARGS(&commandList));
+	//コマンドリストの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+
+	//スワップチェーンを生成する
+	IDXGISwapChain4* swapChain = nullptr;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = kClientWidth;	//画面の幅。クライアント領域を同じものにしておく
+	swapChainDesc.Height = kClientHeight;//画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色の形式
+	swapChainDesc.SampleDesc.Count = 1;//マルチサンプルしない
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画のターゲットを利用する
+	swapChainDesc.BufferCount = 2;//ダブルバッファ
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//モニタにうつしたら、中身を破棄
+	//コマンドキュー、ウィンドウハンドル、設定を渡して生成する
+	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue, hwnd, &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
+	assert(SUCCEEDED(hr));
+
+
 	//****メインループ****//
 	MSG msg{};
 	//ウィンドウの×ボタンが押されるまでループ
