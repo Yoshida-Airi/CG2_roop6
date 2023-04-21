@@ -372,14 +372,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-	//GPUにコマンドリストの実行を行わせる
-	ID3D12CommandList* commandLists[] = { commandList };
-	commandQueue->ExecuteCommandLists(1, commandLists);
-	//GPUにOSに画面の交換を行うよう通知する
-	swapChain->Present(1, 0);
-
-
-
 	//初期値0でFenceを作る
 	ID3D12Fence* fence = nullptr;
 	uint64_t fenceValue = 0;
@@ -389,6 +381,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//FenceのSignalを持つためのイベントを作成する
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
+
+
+
+	//GPUにコマンドリストの実行を行わせる
+	ID3D12CommandList* commandLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(1, commandLists);
+	//GPUにOSに画面の交換を行うよう通知する
+	swapChain->Present(1, 0);
 
 
 
@@ -427,7 +427,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//****メインループ****//
 	MSG msg{};
 	//ウィンドウの×ボタンが押されるまでループ
-	while (msg.message !=WM_QUIT)
+	while (msg.message != WM_QUIT)
 	{
 		//Windowsにメッセージが来てたら最優先で処理させる
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
