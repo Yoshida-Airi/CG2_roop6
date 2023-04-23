@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CG2_roop6", "CG2_roop6.vcxp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{382E0A91-914B-4677-808C-2E87B0A29EA0}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		..\..\06_AL3\KamataEngine20230403\DirectXGame\.editorconfig = ..\..\06_AL3\KamataEngine20230403\DirectXGame\.editorconfig
 	EndProjectSection
 EndProject
 Global
