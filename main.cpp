@@ -1,6 +1,6 @@
 #include<Windows.h>
 #include<cstdint>
-#include <string>
+#include<string>
 #include<format>
 #include<d3d12.h>
 #include<dxgi1_6.h>
@@ -111,6 +111,7 @@ IDxcBlob* CompileShader
 	//コンパイルエラーではなくdxcが起動できないなど致命的な状況
 	assert(SUCCEEDED(hr));
 
+
 	//3.警告・エラーが出ていないか確認する
 	//警告・エラーが出てたらログに出して止める
 	IDxcBlobUtf8* shaderError = nullptr;
@@ -121,6 +122,7 @@ IDxcBlob* CompileShader
 		//警告・エラーダメゼッタイ
 		assert(false);
 	}
+
 
 	//4.Compile結果を受け取って返す
 	//コンパイル結果から実行用のバイナリ部分を取得
@@ -579,10 +581,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	//Shaderをコンパイルする
-	IDxcBlob* vertexShaderBlob = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
+	IDxcBlob* vertexShaderBlob = CompileShader(L"Object3d.VS.hlsl", L"VS_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(vertexShaderBlob != nullptr);
 
-	IDxcBlob* pixcelShaderBlob = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
+	IDxcBlob* pixcelShaderBlob = CompileShader(L"Object3d.PS.hlsl", L"PS_6_0", dxcUtils, dxcCompiler, includeHandler);
 	assert(pixcelShaderBlob != nullptr);
 
 
@@ -646,6 +648,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
+	
 
 
 	
