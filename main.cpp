@@ -304,6 +304,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		//警告時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
+		//警告時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 
 		//抑制するメッセージのID
@@ -408,51 +410,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-	//これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-
-
-
-	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
-	//今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//バリアを張る対象リソース。現在のバッグバッファに対して行う
-	barrier.Transition.pResource = swapChainResource[backBufferIndex];
-	//遷移前(現在)のResourceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	//遷移後のResourceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
 
 
 
 
-	//描画先のRTVを設定する
-	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
-	//指定した色で画面全体をクリアする
-	float clearcolor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBAの順
-	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearcolor, 0, nullptr);
-
-
-
-
-	//画面に描く処理はすべて終わり、画面に移すので、状態を遷移
-	//今回はRenderTargetからPresentにする
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	//TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
-
-
-
-
-	//コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
-	hr = commandList->Close();
-	assert(SUCCEEDED(hr));
 
 
 
@@ -560,33 +521,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-	//GPUにコマンドリストの実行を行わせる
-	ID3D12CommandList* commandLists[] = { commandList };
-	commandQueue->ExecuteCommandLists(1, commandLists);
-	//GPUにOSに画面の交換を行うよう通知する
-	swapChain->Present(1, 0);
 
 
-
-	//Fenceの値を更新
-	fenceValue++;
-	//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-	commandQueue->Signal(fence, fenceValue);
 
 	
 
 
 
 
-	//Fenceの値が指定したSignal値にたどり着いているか確認する
-	//GetCompletedValueの初期値はFence作成時に渡した初期値
-	if (fence->GetCompletedValue() < fenceValue)
-	{
-		//指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
-		fence->SetEventOnCompletion(fenceValue, fenceEvent);
-		//イベント待つ
-		WaitForSingleObject(fenceEvent, INFINITE);
-	}
 
 
 	//頂点リソース用のヒープの設定
@@ -623,24 +565,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	//頂点リソースにデータを書き込む
-	Vector4* vertexData = nullptr;
+	Vector4*vertexData = nullptr;
 	//書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//左下
-	vertexData[0]={ -0.5f,-0.5f,0.0f,1.0f };
+	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
 	//上
 	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
 	//右下
-	vertexData[2]  ={ 0.5f,-0.5f,0.0f,1.0f };
+	vertexData[2] = { 0.5f,-0.5f,0.0f,1.0f };
 
 
 
-	//次のフレーム用のコマンドリストを準備
-	hr = commandAllocator->Reset();
-	assert(SUCCEEDED(hr));
-	hr = commandList->Reset(commandAllocator, nullptr);
-	assert(SUCCEEDED(hr));
+	
 
+
+	//ビューポート
+	D3D12_VIEWPORT viewport{};
+	//クライアント領域のサイズと一緒にして画面全体に表示
+	viewport.Width = kClientWidth;
+	viewport.Height = kClientHeight;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+
+	//シザー矩形
+	D3D12_RECT scissorRect{};
+	//基本的にビューポートと同じ矩形が構成されるようにする
+	scissorRect.left = 0;
+	scissorRect.right = kClientWidth;
+	scissorRect.top = 0;
+	scissorRect.bottom = kClientHeight;
 
 
 	//****メインループ****//
@@ -654,24 +610,39 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-			//ビューポート
-			D3D12_VIEWPORT viewport{};
-			//クライアント領域のサイズと一緒にして画面全体に表示
-			viewport.Width = kClientWidth;
-			viewport.Height = kClientHeight;
-			viewport.TopLeftX = 0;
-			viewport.TopLeftY = 0;
-			viewport.MinDepth = 0.0f;
-			viewport.MaxDepth = 1.0f;
 
-			//シザー矩形
-			D3D12_RECT scissorRect{};
-			//基本的にビューポートと同じ矩形が構成されるようにする
-			scissorRect.left = 0;
-			scissorRect.right = kClientWidth;
-			scissorRect.top = 0;
-			scissorRect.bottom = kClientHeight;
+		}
+		else
+		{
+			//ゲームの処理
+		
 
+
+
+			//これから書き込むバックバッファのインデックスを取得
+			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+
+
+
+			//TransitionBarrierの設定
+			D3D12_RESOURCE_BARRIER barrier{};
+			//今回のバリアはTransition
+			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			//Noneにしておく
+			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+			//バリアを張る対象リソース。現在のバッグバッファに対して行う
+			barrier.Transition.pResource = swapChainResource[backBufferIndex];
+			//遷移前(現在)のResourceState
+			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+			//遷移後のResourceState
+			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			//TransitionBarrierを張る
+			commandList->ResourceBarrier(1, &barrier);
+			//描画先のRTVを設定する
+			commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+			//指定した色で画面全体をクリアする
+			float clearcolor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBAの順
+			commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearcolor, 0, nullptr);
 
 
 			//コマンドを積む
@@ -688,11 +659,55 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-		}
-		else
-		{
-			//ゲームの処理
-		
+
+			//画面に描く処理はすべて終わり、画面に移すので、状態を遷移
+			//今回はRenderTargetからPresentにする
+			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+			//TransitionBarrierを張る
+			commandList->ResourceBarrier(1, &barrier);
+			//コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
+			hr = commandList->Close();
+			assert(SUCCEEDED(hr));
+
+
+
+
+			
+			//GPUにコマンドリストの実行を行わせる
+			ID3D12CommandList* commandLists[] = { commandList };
+			commandQueue->ExecuteCommandLists(1, commandLists);
+			//GPUにOSに画面の交換を行うよう通知する
+			swapChain->Present(1, 0);
+			//Fenceの値を更新
+			fenceValue++;
+			//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+			commandQueue->Signal(fence, fenceValue);
+
+
+
+
+
+			//Fenceの値が指定したSignal値にたどり着いているか確認する
+			//GetCompletedValueの初期値はFence作成時に渡した初期値
+			if (fence->GetCompletedValue() < fenceValue)
+			{
+				//指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
+				fence->SetEventOnCompletion(fenceValue, fenceEvent);
+				//イベント待つ
+				WaitForSingleObject(fenceEvent, INFINITE);
+			}
+
+
+
+			//次のフレーム用のコマンドリストを準備
+			hr = commandAllocator->Reset();
+			assert(SUCCEEDED(hr));
+			hr = commandList->Reset(commandAllocator, nullptr);
+			assert(SUCCEEDED(hr));
+
+
+
 		}
 	}
 
@@ -742,9 +757,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		debug->Release();
 	}
 
-	//警告時に止まる
-	infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-
+	
 	return 0;
 }
 
