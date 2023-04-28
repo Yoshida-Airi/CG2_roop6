@@ -13,6 +13,11 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
+struct Vector4
+{
+	float x, y, z, w;
+};
+
 
 void Log(const std::string& message)
 {
@@ -132,13 +137,6 @@ IDxcBlob* CompileShader
 	return shaderBlob;
 
 }
-
-
-struct Vector4
-{
-	float x, y, z, m;
-};
-
 
 //ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -409,6 +407,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
+
 	//これから書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
@@ -437,6 +436,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//指定した色で画面全体をクリアする
 	float clearcolor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBAの順
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearcolor, 0, nullptr);
+
 
 
 
@@ -484,12 +484,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	//RootSignature作成
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootsignature{};
-	descriptionRootsignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
+	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	//シリアライズしてバイナリにする
 	ID3DBlob* signatureBlob = nullptr;
 	ID3DBlob* errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptionRootsignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr))
 	{
 		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -514,7 +514,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 
-	//Blendstateの設定
+	//BlendStateの設定
 	D3D12_BLEND_DESC blendDesc{};
 	//すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
@@ -610,6 +610,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	assert(SUCCEEDED(hr));
 
 
+
 	//頂点バッファビューを作成する
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 	//リソースの先頭のアドレスから使う
@@ -620,49 +621,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	vertexBufferView.StrideInBytes = sizeof(Vector4);
 
 
+
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//左下
-	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
+	vertexData[0]={ -0.5f,-0.5f,0.0f,1.0f };
 	//上
 	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
 	//右下
-	vertexData[2] = { 0.5f,-0.5f,0.0f,1.0f };
-
-
-	//ビューポート
-	D3D12_VIEWPORT viewport{};
-	//クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = kClientWidth;
-	viewport.Height = kClientHeight;
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-
-	//シザー矩形
-	D3D12_RECT scissorRect{};
-	//基本的にビューポートと同じ矩形が構成されるようにする
-	scissorRect.left = 0;
-	scissorRect.right = kClientWidth;
-	scissorRect.top = 0;
-	scissorRect.bottom = kClientHeight;
-
-
-
-	//コマンドを積む
-	commandList->RSSetViewports(1, &viewport);	//Viewportを設定
-	commandList->RSSetScissorRects(1, &scissorRect);	//Scirssorを設定
-	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	commandList->SetGraphicsRootSignature(rootSignature);
-	commandList->SetPipelineState(graphicsPipelineState);	//PSOを設定
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	//VBVを設定
-	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
-	commandList->DrawInstanced(3, 1, 0, 0);
+	vertexData[2]  ={ 0.5f,-0.5f,0.0f,1.0f };
 
 
 
@@ -684,11 +653,45 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+			//ビューポート
+			D3D12_VIEWPORT viewport{};
+			//クライアント領域のサイズと一緒にして画面全体に表示
+			viewport.Width = kClientWidth;
+			viewport.Height = kClientHeight;
+			viewport.TopLeftX = 0;
+			viewport.TopLeftY = 0;
+			viewport.MinDepth = 0.0f;
+			viewport.MaxDepth = 1.0f;
+
+			//シザー矩形
+			D3D12_RECT scissorRect{};
+			//基本的にビューポートと同じ矩形が構成されるようにする
+			scissorRect.left = 0;
+			scissorRect.right = kClientWidth;
+			scissorRect.top = 0;
+			scissorRect.bottom = kClientHeight;
+
+
+
+			//コマンドを積む
+			commandList->RSSetViewports(1, &viewport);	//Viewportを設定
+			commandList->RSSetScissorRects(1, &scissorRect);	//Scirssorを設定
+			//RootSignatureを設定。PSOに設定しているけど別途設定が必要
+			commandList->SetGraphicsRootSignature(rootSignature);
+			commandList->SetPipelineState(graphicsPipelineState);	//PSOを設定
+			commandList->IASetVertexBuffers(0, 1, &vertexBufferView);	//VBVを設定
+			//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
+			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
+			commandList->DrawInstanced(3, 1, 0, 0);
+
+
+
 		}
 		else
 		{
 			//ゲームの処理
-
 		
 		}
 	}
@@ -717,7 +720,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	CloseWindow(hwnd);
 
 
-	/*vertexResource->Release();
+	vertexResource->Release();
 	graphicsPipelineState->Release();
 	signatureBlob->Release();
 	if (errorBlob)
@@ -726,7 +729,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 	rootSignature->Release();
 	pixelShaderBlob->Release();
-	vertexShaderBlob->Release();*/
+	vertexShaderBlob->Release();
 
 
 	//リソースリークチェック
