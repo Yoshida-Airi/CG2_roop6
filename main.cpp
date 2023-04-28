@@ -685,9 +685,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			commandQueue->Signal(fence, fenceValue);
 
 
-
-
-
 			//Fenceの値が指定したSignal値にたどり着いているか確認する
 			//GetCompletedValueの初期値はFence作成時に渡した初期値
 			if (fence->GetCompletedValue() < fenceValue)
