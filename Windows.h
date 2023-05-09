@@ -1,16 +1,24 @@
 #pragma once
-#include<Windows.h>
+
+#include <Windows.h>
+#include <cstdint>
+
 class Window
 {
 public:
-	//インスタンス
-	Window();
-	//デストラクタ
-	~Window();
+    Window(const wchar_t* title, int width, int height);
+    ~Window();
+
+    bool Create();
+    void Show(int nCmdShow);
+    void MessageLoop();
 
 private:
-	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	
-	int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
+    static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+    const wchar_t* m_title;
+    int m_width;
+    int m_height;
+    HWND m_hwnd;
 };
 
