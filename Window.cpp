@@ -18,20 +18,20 @@ Window::Window(int32_t width, int32_t height)
 //デストラクタ
 Window::~Window()
 {
-
-}
-
-//ループ起動
-void Window::Run()
-{
-	if (Initialize())
-	{
-		MainRoop();
-	}
-	//アプリケーションの終了
 	EndRoop();
 }
 
+
+//開始
+void Window::StartApp()
+{
+	Initialize();
+}
+//終了
+void Window::EndApp()
+{
+	EndRoop();
+}
 
 /*=====================================*/
 /* 　　　　   プライベートメソッド　　　      */
@@ -120,26 +120,7 @@ bool Window::InitializeWindow()
 
 }
 
-//ウィンドウの更新
-void Window::MainRoop()
-{
-	MSG msg{};
-	while (msg.message != WM_QUIT)
-	{
-		//Windowsにメッセージが来てたら最優先で処理させる
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
 
-
-		}
-		else
-		{
-			//ゲームの処理
-		}
-	}
-}
 
 void Window::EndRoop()
 {

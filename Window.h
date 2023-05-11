@@ -9,8 +9,10 @@ public:
 	Window(int32_t width, int32_t height);
 	//デストラクタ
 	~Window();
-	//ループ起動
-	void Run();
+	//アプリケーションの開始
+	void StartApp();
+	//アプリケーションの終了
+	void EndApp();
 
 private:
 
