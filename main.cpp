@@ -1,22 +1,12 @@
-#include <Windows.h>
-#include <cstdint>
-#include "Windows.h"
+#include<Windows.h>
+#include"Window.h"
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+//Windowsアプリでのエントリーポイント(main関数)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-    // Create an instance of the Window class
-    Window mainWindow(hInstance, "My Window", 800, 600);
+	Window window(1280, 720);
+	window.Run();
 
-    // Show the window
-    mainWindow.Show();
+	return 0;
 
-    // Start the message loop
-    MSG msg = { 0 };
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return static_cast<int32_t>(msg.wParam);
 }
