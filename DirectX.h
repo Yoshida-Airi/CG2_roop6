@@ -7,12 +7,15 @@
 #include<string>
 #include<format>
 #include<dxgidebug.h>
+#include<dxgidebug.h>
+#include<dxcapi.h>
 #include "ConvertString.h"
 #include"Window.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
+#pragma comment(lib,"dxcompiler.lib")
 
 class DirectX
 {
@@ -28,6 +31,14 @@ public:
 	void Update();
 	void EndD3D();
 
+
+	ID3D12Device* GetDevice() const { return Device; }
+	//コマンドリスト
+	ID3D12GraphicsCommandList* GetCommandList()const { return commandList; }
+
+	void SetHr(HRESULT hr_);
+	void SetCommandList(ID3D12GraphicsCommandList* commandList_);
+
 private:
 	/*=====================================*/
 	/* 　　　　   プライベート変数    　        */
@@ -36,7 +47,7 @@ private:
 	//フレームバッファ数
 	static const int32_t FrameCount = 2;
 	//デバイス
-	ID3D12Device* Device = nullptr;
+	ID3D12Device* Device;
 	//使用するアダプタ用の変数。最初にnullptrを入れておく
 	IDXGIAdapter4* useAdapter = nullptr;
 	//dxgiFactory

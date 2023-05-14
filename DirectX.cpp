@@ -1,7 +1,5 @@
 #include "DirectX.h"
-#include<dxgidebug.h>
 
-#pragma comment(lib,"dxguid.lib")
 
 /*=====================================*/
 /* 　　　　   パブリックメソッド　　　 　     */
@@ -18,6 +16,7 @@ DirectX::DirectX()
 	hwnd_ = window_.GetHwnd();
 	WindowHeight = window_.GetHeight();
 	WindowWidth = window_.GetWidth();
+	Device = nullptr;
 }
 
 //デストラクタ
@@ -41,6 +40,18 @@ void DirectX::EndD3D()
 	End();
 }
 
+
+
+
+void DirectX::SetHr(HRESULT hr_)
+{
+	hr = hr_;
+}
+
+void DirectX::SetCommandList(ID3D12GraphicsCommandList* commandList_)
+{
+	commandList = commandList_;
+}
 
 /*=====================================*/
 /* 　　　　   プライベートメソッド　　　      */
