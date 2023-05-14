@@ -1,18 +1,20 @@
 #include "Window.h"
 #include <windows.h>
 #include <tchar.h>
+#include<d3d12.h>
+
 
 /*=====================================*/
 /* 　　　　   パブリックメソッド　　　 　     */
 /*=====================================*/
 
 //コンストラクタ
-Window::Window(int32_t width, int32_t height)
+Window::Window()
 {
-	hInst = nullptr;
-	hwnd = nullptr;
-	Width = width;
-	Height=height;
+	hInst_ = nullptr;
+	hwnd_ = nullptr;
+	
+	
 }
 
 //デストラクタ
@@ -81,19 +83,17 @@ bool Window::InitializeWindow()
 	//ウィンドウの登録
 	RegisterClass(&wc);
 
-	//ウィンドウサイズの決定
-	//クライアント領域のサイズ
-	Width = 1280;
-	Height = 720;
+	Width_ = 1280;
+	Height_ = 720;
 
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
-	RECT wrc = { 0,0,Width,Height };
+	RECT wrc = { 0,0,Width_,Height_ };
 
 	//クライアント領域をもとに実際のサイズにwrcを変更してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 	//ウィンドウの生成
-	hwnd = CreateWindow
+	hwnd_ = CreateWindow
 	(
 		wc.lpszClassName,		//利用するクラス名
 		L"CG2",					//タイトルバーの文字(何でも良い)
@@ -108,13 +108,26 @@ bool Window::InitializeWindow()
 		nullptr					//オプション
 	);
 
-	if (hwnd == nullptr)
+	//デバッグ
+//#ifdef _DEBUG
+//	ID3D12Debug1* debugController = nullptr;
+//	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+//	{
+//		//デバッグレイヤーを有効化する
+//		debugController->EnableDebugLayer();
+//		//さらにGPU側でもチェックを行うようにする
+//		debugController->SetEnableGPUBasedValidation(TRUE);
+//	}
+//#endif
+
+
+	if (hwnd_ == nullptr)
 	{
 		return false;
 	}
 
 	//ウィンドウを表示する
-	ShowWindow(hwnd, SW_SHOW);
+	ShowWindow(hwnd_, SW_SHOW);
 
 	return true;
 
@@ -132,5 +145,5 @@ void Window::EndRoop()
 void Window::EndWindow()
 {
 	//ウィンドウの登録解除
-	hwnd=nullptr;
+	hwnd_ = nullptr;
 }

@@ -5,8 +5,11 @@
 class Window
 {
 public:
+	/*=====================================*/
+	/* 　　　　   パブリックメソッド　　　 　     */
+	/*=====================================*/
 	//コンストラクタ
-	Window(int32_t width, int32_t height);
+	Window();
 	//デストラクタ
 	~Window();
 	//アプリケーションの開始
@@ -14,16 +17,20 @@ public:
 	//アプリケーションの終了
 	void EndApp();
 
+	int32_t GetWidth() const { return Width_; };
+	int32_t GetHeight() const { return Height_; };
+	HWND GetHwnd() const { return hwnd_; };
+
 private:
 
 	/*=====================================*/
 	/* 　　　　   プライベート変数    　        */	
 	/*=====================================*/
 
-	HINSTANCE hInst;	//インスタンスハンドル
-	HWND hwnd;			//ウィンドウハンドル
-	int32_t Width;		//ウィンドウの横幅
-	int32_t Height;	//ウィンドウの縦幅
+	HINSTANCE hInst_;	//インスタンスハンドル
+	HWND hwnd_;			//ウィンドウハンドル
+	int32_t Width_;		//ウィンドウの横幅
+	int32_t Height_;	//ウィンドウの縦幅
 
 
 	/*=====================================*/
@@ -38,8 +45,7 @@ private:
 	bool InitializeWindow();
 	//ウィンドウの終了
 	void EndWindow();
-	//ウィンドウの更新
-	void MainRoop();
+	
 	
 	
 	//ウィンドウプロシージャ
