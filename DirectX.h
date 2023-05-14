@@ -6,11 +6,13 @@
 #include<cstdint>
 #include<string>
 #include<format>
+#include<dxgidebug.h>
 #include "ConvertString.h"
 #include"Window.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
+#pragma comment(lib,"dxguid.lib")
 
 class DirectX
 {
@@ -24,6 +26,7 @@ public:
 
 	void Start();
 	void Update();
+	void EndD3D();
 
 private:
 	/*=====================================*/
@@ -34,6 +37,10 @@ private:
 	static const int32_t FrameCount = 2;
 	//デバイス
 	ID3D12Device* Device = nullptr;
+	//使用するアダプタ用の変数。最初にnullptrを入れておく
+	IDXGIAdapter4* useAdapter = nullptr;
+	//dxgiFactory
+	IDXGIFactory7* dxgiFactory = nullptr;
 
 	HRESULT hr;
 	//スワップチェーン
@@ -52,7 +59,12 @@ private:
 	ID3D12Fence* fence = nullptr;
 	uint64_t fenceValue = 0;
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	//info
+	ID3D12InfoQueue* infoQueue = nullptr;
 
+	//ディスクリプタヒープ
+	ID3D12DescriptorHeap* rtvdescriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	//ウィンドウクラス
 	Window window_;
 
@@ -66,7 +78,7 @@ private:
 
 	bool Initialize();
 	void MainRoop();
-	
+	void End();
 
 };
 

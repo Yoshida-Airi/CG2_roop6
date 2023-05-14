@@ -1,5 +1,7 @@
 #include "DirectX.h"
+#include<dxgidebug.h>
 
+#pragma comment(lib,"dxguid.lib")
 
 /*=====================================*/
 /* 　　　　   パブリックメソッド　　　 　     */
@@ -34,6 +36,11 @@ void DirectX::Update()
 	MainRoop();
 }
 
+void DirectX::EndD3D()
+{
+	End();
+}
+
 
 /*=====================================*/
 /* 　　　　   プライベートメソッド　　　      */
@@ -46,7 +53,6 @@ bool DirectX::Initialize()
 	//DXGIファクトリーの生成
 	//---------------------------------------
 
-	IDXGIFactory7* dxgiFactory = nullptr;
 	//HRESULTはWindows系のエラーコードであり、
 	//関数が成功したかどうかをSUCCEEDEDマクロで判定できる
 	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
@@ -59,8 +65,7 @@ bool DirectX::Initialize()
 	//使用するアダプタ(GPU)を決定する
 	//--------------------------------------
  
-	//使用するアダプタ用の変数。最初にnullptrを入れておく
-	IDXGIAdapter4* useAdapter = nullptr;
+	
 	//良い順にアダプタを頼む
 	for (UINT i = 0;
 		dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) != DXGI_ERROR_NOT_FOUND;
@@ -119,7 +124,7 @@ bool DirectX::Initialize()
 	//デバッグ
 	//---------------------------------
 #ifdef _DEBUG
-	ID3D12InfoQueue* infoQueue = nullptr;
+	
 	if (SUCCEEDED(Device->QueryInterface(IID_PPV_ARGS(&infoQueue))))
 	{
 		//ヤバイエラー時に止まる
@@ -205,8 +210,6 @@ bool DirectX::Initialize()
 	//ディスクリプタヒープの生成
 	//-------------------------------------
 
-	ID3D12DescriptorHeap* rtvdescriptorHeap = nullptr;
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;//レンダーターゲットビュー用
 	rtvDescriptorHeapDesc.NumDescriptors = 2;//ダブルバッファ用に2つ。多くても別に構わない
 	hr = Device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvdescriptorHeap));
@@ -217,7 +220,6 @@ bool DirectX::Initialize()
 	//SwapChainからResourceを引っ張ってくる
 	//------------------------------------------
 
-	
 	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResource[0]));
 	//うまく取得できなければ起動できない
 	assert(SUCCEEDED(hr));
@@ -349,5 +351,39 @@ void DirectX::MainRoop()
 	assert(SUCCEEDED(hr));
 
 
+
+}
+
+void DirectX::End()
+{
+
+	//解放処理
+	CloseHandle(fenceEvent);
+	fence->Release();
+	rtvdescriptorHeap->Release();
+	swapChainResource[0]->Release();
+	swapChainResource[1]->Release();
+	swapChain->Release();
+	commandList->Release();
+	commandAllocator->Release();
+	commandQueue->Release();
+	Device->Release();
+	useAdapter->Release();
+	dxgiFactory->Release();
+
+	CloseWindow(hwnd_);
+
+	//リソースリークチェック
+	IDXGIDebug1* debug;
+	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug))))
+	{
+		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
+		debug->Release();
+	}
+
+	////警告時に止まる
+	//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 }

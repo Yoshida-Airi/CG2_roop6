@@ -14,7 +14,11 @@ Window::Window()
 	hInst_ = nullptr;
 	hwnd_ = nullptr;
 	
-	
+	Height_ = 0;
+	Width_ = 0;
+#ifdef _DEBUG
+	debugController_ = nullptr;
+#endif
 }
 
 //デストラクタ
@@ -34,6 +38,8 @@ void Window::EndApp()
 {
 	EndRoop();
 }
+
+
 
 /*=====================================*/
 /* 　　　　   プライベートメソッド　　　      */
@@ -110,13 +116,12 @@ bool Window::InitializeWindow()
 
 	//デバッグ
 #ifdef _DEBUG
-	ID3D12Debug1* debugController = nullptr;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_))))
 	{
 		//デバッグレイヤーを有効化する
-		debugController->EnableDebugLayer();
+		debugController_->EnableDebugLayer();
 		//さらにGPU側でもチェックを行うようにする
-		debugController->SetEnableGPUBasedValidation(TRUE);
+		debugController_->SetEnableGPUBasedValidation(TRUE);
 	}
 #endif
 
@@ -144,6 +149,10 @@ void Window::EndRoop()
 //ウィンドウの終了
 void Window::EndWindow()
 {
-	//ウィンドウの登録解除
-	hwnd_ = nullptr;
+#ifdef _DEBUG
+	if (debugController_ != nullptr)
+	{
+		debugController_->Release();
+	}
+#endif
 }

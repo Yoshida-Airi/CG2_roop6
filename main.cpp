@@ -13,6 +13,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//数値の取得
 	direct.hwnd_ = window.GetHwnd();
+	
 
 	//DirectXの初期化
 	direct.Start();
@@ -41,6 +42,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//アプリケーションの終了
 	window.EndApp();
+
+	direct.EndD3D();
 
 	return 0;
 

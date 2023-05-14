@@ -1,6 +1,8 @@
 #pragma once
 #include <windows.h>
 #include<cstdint>
+#include<d3d12.h>
+
 
 class Window
 {
@@ -21,6 +23,7 @@ public:
 	int32_t GetHeight() const { return Height_; };
 	HWND GetHwnd() const { return hwnd_; };
 
+
 private:
 
 	/*=====================================*/
@@ -31,6 +34,11 @@ private:
 	HWND hwnd_;			//ウィンドウハンドル
 	int32_t Width_;		//ウィンドウの横幅
 	int32_t Height_;	//ウィンドウの縦幅
+	
+	//デバッグコントローラー
+#ifdef _DEBUG
+	ID3D12Debug1* debugController_;
+#endif
 
 
 	/*=====================================*/
