@@ -117,44 +117,44 @@ bool DirectX::Initialize()
 
 	//----------------------------------
 	//デバッグ
-//	//---------------------------------
-//#ifdef _DEBUG
-//	ID3D12InfoQueue* infoQueue = nullptr;
-//	if (SUCCEEDED(Device->QueryInterface(IID_PPV_ARGS(&infoQueue))))
-//	{
-//		//ヤバイエラー時に止まる
-//		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
-//		//エラー時に止まる
-//		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
-//		//警告時に止まる
-//		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-//
-//		//警告時に止まる
-//		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-//
-//
-//		//抑制するメッセージのID
-//		D3D12_MESSAGE_ID denyIds[] =
-//		{
-//			//Windows11でのDXGIデバッグレイヤーとDX12デバッグレイヤーの相互作用バグによるエラーメッセージ
-//			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
-//		};
-//		//抑制するレベル
-//		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
-//		D3D12_INFO_QUEUE_FILTER filter{};
-//		filter.DenyList.NumIDs = _countof(denyIds);
-//		filter.DenyList.pIDList = denyIds;
-//		filter.DenyList.NumSeverities = _countof(severities);
-//		filter.DenyList.pSeverityList = severities;
-//		//指定したメッセージの表示を抑制する
-//		infoQueue->PushStorageFilter(&filter);
-//
-//
-//		//解放
-//		infoQueue->Release();
-//	}
-//#endif
-//
+	//---------------------------------
+#ifdef _DEBUG
+	ID3D12InfoQueue* infoQueue = nullptr;
+	if (SUCCEEDED(Device->QueryInterface(IID_PPV_ARGS(&infoQueue))))
+	{
+		//ヤバイエラー時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		//エラー時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		//警告時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+		//警告時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+
+		//抑制するメッセージのID
+		D3D12_MESSAGE_ID denyIds[] =
+		{
+			//Windows11でのDXGIデバッグレイヤーとDX12デバッグレイヤーの相互作用バグによるエラーメッセージ
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+		};
+		//抑制するレベル
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+		D3D12_INFO_QUEUE_FILTER filter{};
+		filter.DenyList.NumIDs = _countof(denyIds);
+		filter.DenyList.pIDList = denyIds;
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		//指定したメッセージの表示を抑制する
+		infoQueue->PushStorageFilter(&filter);
+
+
+		//解放
+		infoQueue->Release();
+	}
+#endif
+
 
 
 	//------------------------------
@@ -217,7 +217,7 @@ bool DirectX::Initialize()
 	//SwapChainからResourceを引っ張ってくる
 	//------------------------------------------
 
-	ID3D12Resource* swapChainResource[2] = { nullptr };
+	
 	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResource[0]));
 	//うまく取得できなければ起動できない
 	assert(SUCCEEDED(hr));
@@ -247,11 +247,11 @@ bool DirectX::Initialize()
 	//---------------------------------
 	
 	//初期値0でFenceを作る
-	//hr = Device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-	//assert(SUCCEEDED(hr));
+	hr = Device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
 
-	////FenceのSignalを持つためのイベントを作成する
-	//assert(fenceEvent != nullptr);
+	//FenceのSignalを持つためのイベントを作成する
+	assert(fenceEvent != nullptr);
 
 
 	return true;
@@ -272,19 +272,19 @@ void DirectX::MainRoop()
 	// TransitionBarrierを張るコード
 	//------------------------
 	//TransitionBarrierの設定
-	//D3D12_RESOURCE_BARRIER barrier{};
-	////今回のバリアはTransition
-	//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	////Noneにしておく
-	//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	////バリアを張る対象リソース。現在のバッグバッファに対して行う
-	//barrier.Transition.pResource = swapChainResource[backBufferIndex];
-	////遷移前(現在)のResourceState
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	////遷移後のResourceState
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	////TransitionBarrierを張る
-	//commandList->ResourceBarrier(1, &barrier);
+	D3D12_RESOURCE_BARRIER barrier{};
+	//今回のバリアはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//バリアを張る対象リソース。現在のバッグバッファに対して行う
+	barrier.Transition.pResource = swapChainResource[backBufferIndex];
+	//遷移前(現在)のResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	//遷移後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
 
 	//描画先のRTVを設定する
 	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
@@ -298,10 +298,10 @@ void DirectX::MainRoop()
 	
 	//画面に描く処理はすべて終わり、画面に移すので、状態を遷移
 	//今回はRenderTargetからPresentにする
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	////TransitionBarrierを張る
-	//commandList->ResourceBarrier(1, &barrier);
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	//TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
 
 	//コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
 	hr = commandList->Close();
@@ -323,10 +323,10 @@ void DirectX::MainRoop()
 	//---------------------------------
 	// GPUにシグナルを送る
 	//-------------------------------
-	////Fenceの値を更新
-	//fenceValue++;
-	////GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-	//commandQueue->Signal(fence, fenceValue);
+	//Fenceの値を更新
+	fenceValue++;
+	//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
+	commandQueue->Signal(fence, fenceValue);
 
 	//------------------------------------
 	// fenceの値を確認してGPUを待つ
@@ -334,13 +334,13 @@ void DirectX::MainRoop()
 	
 	//Fenceの値が指定したSignal値にたどり着いているか確認する
 	//GetCompletedValueの初期値はFence作成時に渡した初期値
-	//if (fence->GetCompletedValue() < fenceValue)
-	//{
-	//	//指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
-	//	fence->SetEventOnCompletion(fenceValue, fenceEvent);
-	//	//イベント待つ
-	//	WaitForSingleObject(fenceEvent, INFINITE);
-	//}
+	if (fence->GetCompletedValue() < fenceValue)
+	{
+		//指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+		//イベント待つ
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
 
 	//次のフレーム用のコマンドリストを準備
 	hr = commandAllocator->Reset();
