@@ -134,6 +134,8 @@ bool Window::InitializeWindow()
 	//ウィンドウを表示する
 	ShowWindow(hwnd_, SW_SHOW);
 
+	SetHwnd(hwnd_);
+
 	return true;
 
 }
@@ -155,4 +157,9 @@ void Window::EndWindow()
 		debugController_->Release();
 	}
 #endif
+}
+
+void Window::SetHwnd(HWND hwnd)
+{
+	hwnd_ = hwnd;
 }

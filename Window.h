@@ -23,6 +23,7 @@ public:
 	int32_t GetHeight() const { return Height_; };
 	HWND GetHwnd() const { return hwnd_; };
 
+	void SetHwnd(HWND hwnd);
 
 private:
 

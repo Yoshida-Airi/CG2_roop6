@@ -22,7 +22,7 @@ public:
 	//デストラクタ
 	~DirectX();
 
-	HWND hwnd_;
+
 
 	void Start();
 	void Update();
@@ -32,6 +32,8 @@ private:
 	/*=====================================*/
 	/* 　　　　   プライベート変数    　        */
 	/*=====================================*/
+
+	HWND hwnd_;
 
 	//フレームバッファ数
 	static const int32_t FrameCount = 2;

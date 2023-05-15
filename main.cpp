@@ -11,8 +11,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//アプリケーションの開始
 	window.StartApp();
 
-	//数値の取得
-	direct.hwnd_ = window.GetHwnd();
 	
 
 	//DirectXの初期化
