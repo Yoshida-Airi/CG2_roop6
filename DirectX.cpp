@@ -12,8 +12,6 @@
 //コンストラクタ
 DirectX::DirectX()
 {
-
-
 	hr = 0;
 	hwnd_ = window_.GetHwnd();
 	WindowHeight = window_.GetHeight();
@@ -383,7 +381,7 @@ void DirectX::End()
 		debug->Release();
 	}
 
-	//警告時に止まる
-	infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+	////警告時に止まる
+	//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 	
 }
