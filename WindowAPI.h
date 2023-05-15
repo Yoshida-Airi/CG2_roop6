@@ -4,32 +4,33 @@
 #include<d3d12.h>
 
 
-class Window
+class WindowAPI
 {
 public:
+	
+
 	/*=====================================*/
-	/* 　　　　   パブリックメソッド　　　 　     */
+	/* 　　　　   パブリックメソッド　　　 　    */
 	/*=====================================*/
 	//コンストラクタ
-	Window();
+	WindowAPI();
 	//デストラクタ
-	~Window();
+	~WindowAPI();
 	//アプリケーションの開始
 	void StartApp();
 	//アプリケーションの終了
 	void EndApp();
 
-	int32_t GetWidth() const { return Width_; };
-	int32_t GetHeight() const { return Height_; };
-	HWND GetHwnd() const { return hwnd_; };
-
-	void SetHwnd(HWND hwnd);
+	
 
 private:
 
 	/*=====================================*/
 	/* 　　　　   プライベート変数    　        */	
 	/*=====================================*/
+
+	//タイトル
+	const wchar_t* Title_ = L"CG2";
 
 	HINSTANCE hInst_;	//インスタンスハンドル
 	HWND hwnd_;			//ウィンドウハンドル
@@ -54,6 +55,7 @@ private:
 	//ウィンドウの終了
 	void EndWindow();
 	
+
 	
 	
 	//ウィンドウプロシージャ

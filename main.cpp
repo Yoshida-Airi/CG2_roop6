@@ -1,11 +1,11 @@
 #include<Windows.h>
-#include"Window.h"
+#include"WindowAPI.h"
 
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Window window;
+	WindowAPI window;
 
 
 	//アプリケーションの開始
@@ -13,7 +13,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	/*=====================================*/
-	/* 　　　　   メインループ　　    　        */
+	/* 　　　　   メインループ　　    　       */
 	/*=====================================*/
 
 	MSG msg{};
