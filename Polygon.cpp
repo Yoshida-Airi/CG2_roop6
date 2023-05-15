@@ -1,4 +1,6 @@
 #include "Polygon.h"
+#include"DirectX.h"
+#include"Window.h"
 
 /*=====================================*/
 /* 　　　　   パブリックメソッド　　　 　    */
@@ -6,7 +8,15 @@
 
 Polygon::Polygon()
 {
-
+	//バイナリを元に生成
+	ID3D12RootSignature* rootSignature = nullptr;
+	//PSOの生成
+	ID3D12PipelineState* graphicsPipelineState = nullptr;
+	//実際に頂点リソースを作る
+	ID3D12Resource* vertexResource = nullptr;
+	//シリアライズしてバイナリにする
+	ID3DBlob* signatureBlob = nullptr;
+	ID3DBlob* errorBlob = nullptr;
 }
 
 Polygon::~Polygon()
@@ -84,7 +94,7 @@ IDxcBlob* Polygon::CompileShader
 		includeHandler,			//includeが含まれた諸々
 		IID_PPV_ARGS(&shaderResult)	//コンパイル結果
 	);
-	direct_.SetHr(hr);
+	
 	//コンパイルエラーではなくdxcが起動できないなど致命的な状況
 	assert(SUCCEEDED(hr));
 
@@ -103,7 +113,7 @@ IDxcBlob* Polygon::CompileShader
 	//コンパイル結果から実行用のバイナリ部分を取得
 	IDxcBlob* shaderBlob = nullptr;
 	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
-	direct_.SetHr(hr);
+
 	assert(SUCCEEDED(hr));
 	//成功したログを出す
 	Log(ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
@@ -124,7 +134,7 @@ bool Polygon::Initialize()
 	IDxcUtils* dxcUtils = nullptr;
 	IDxcCompiler3* dxcCompiler = nullptr;
 	hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
-	direct_.SetHr(hr);
+	
 	assert(SUCCEEDED(hr));
 	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
 	assert(SUCCEEDED(hr));
@@ -132,7 +142,7 @@ bool Polygon::Initialize()
 	//現時点でincludeはしないが、includeに対応するための設定を行っておく
 	IDxcIncludeHandler* includeHandler = nullptr;
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
-	direct_.SetHr(hr);
+
 	assert(SUCCEEDED(hr));
 
 	//----------------------------------
@@ -143,7 +153,7 @@ bool Polygon::Initialize()
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	direct_.SetHr(hr);
+	
 	if (FAILED(hr))
 	{
 		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
@@ -151,7 +161,7 @@ bool Polygon::Initialize()
 	}
 	
 	hr = direct_.GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	direct_.SetHr(hr);
+	
 	assert(SUCCEEDED(hr));
 
 	//-----------------------------------
@@ -216,7 +226,7 @@ bool Polygon::Initialize()
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	
 	hr = direct_.GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));
-	direct_.SetHr(hr);
+	
 	assert(SUCCEEDED(hr));
 
 	//--------------------------------------
@@ -239,7 +249,7 @@ bool Polygon::Initialize()
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	
 	hr = direct_.GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResource));
-	direct_.SetHr(hr);
+	
 	assert(SUCCEEDED(hr));
 
 	//----------------------------------------
@@ -297,7 +307,7 @@ void Polygon::PolygonDraw()
 	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
 	direct_.GetCommandList()->SetGraphicsRootSignature(rootSignature);
 	direct_.GetCommandList()->SetPipelineState(graphicsPipelineState);	//PSOを設定
-	direct_.GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);	//VBVを設定
+	direct_.GetCommandList()->IASetVertexBuffers(0, 1,vertexBufferView);	//VBVを設定
 	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
 	direct_.GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
