@@ -1,11 +1,11 @@
 #include<Windows.h>
-#include"Window.h"
+#include"WindowAPI.h"
 #include "DirectX.h"
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Window window;
+	WindowAPI window;
 	DirectX direct;
 
 	//アプリケーションの開始

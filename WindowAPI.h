@@ -2,38 +2,45 @@
 #include <windows.h>
 #include<cstdint>
 #include<d3d12.h>
-#include"ProtectedVar.h"
 
-class Window:public protectedVar
+
+class WindowAPI
 {
 public:
+
+
 	/*=====================================*/
-	/* 　　　　   パブリックメソッド　　　 　     */
+	/* 　　　　   パブリックメソッド　　　 　    */
 	/*=====================================*/
 	//コンストラクタ
-	Window();
+	WindowAPI();
 	//デストラクタ
-	~Window();
+	~WindowAPI();
 	//アプリケーションの開始
 	void StartApp();
 	//アプリケーションの終了
 	void EndApp();
 
 
+
 private:
 
 	/*=====================================*/
-	/* 　　　　   プライベート変数    　        */	
+	/* 　　　　   プライベート変数    　        */
 	/*=====================================*/
 
-	HINSTANCE hInst_;	//インスタンスハンドル
-	
-	
-	//デバッグコントローラー
-#ifdef _DEBUG
-	ID3D12Debug1* debugController_;
-#endif
+	//タイトル
+	const wchar_t* Title_ = L"CG2";
 
+	HINSTANCE hInst_;	//インスタンスハンドル
+	HWND hwnd_;			//ウィンドウハンドル
+	int32_t Width_;		//ウィンドウの横幅
+	int32_t Height_;	//ウィンドウの縦幅
+
+	RECT wrc_;
+
+	//ウィンドウクラスの登録(設定をWindowsに伝える)
+	WNDCLASS wc_;
 
 	/*=====================================*/
 	/* 　　　　   プライベートメソッド　　　      */
@@ -47,9 +54,10 @@ private:
 	bool InitializeWindow();
 	//ウィンドウの終了
 	void EndWindow();
-	
-	
-	
+
+
+
+
 	//ウィンドウプロシージャ
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
