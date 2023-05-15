@@ -13,9 +13,7 @@
 DirectX::DirectX()
 {
 	hr = 0;
-	hwnd_ = window_.GetHwnd();
-	WindowHeight = window_.GetHeight();
-	WindowWidth = window_.GetWidth();
+	
 }
 
 //デストラクタ
@@ -193,8 +191,8 @@ bool DirectX::Initialize()
 	//-------------------------------------
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width = window_.GetWidth();	//画面の幅。クライアント領域を同じものにしておく
-	swapChainDesc.Height = window_.GetHeight();//画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Width =Width_;	//画面の幅。クライアント領域を同じものにしておく
+	swapChainDesc.Height = Height_;//画面の高さ。ウィンドウのクライアント領域を同じものにしておく
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色の形式
 	swapChainDesc.SampleDesc.Count = 1;//マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画のターゲットを利用する

@@ -2,9 +2,9 @@
 #include <windows.h>
 #include<cstdint>
 #include<d3d12.h>
+#include"ProtectedVar.h"
 
-
-class Window
+class Window:public protectedVar
 {
 public:
 	/*=====================================*/
@@ -19,11 +19,6 @@ public:
 	//アプリケーションの終了
 	void EndApp();
 
-	int32_t GetWidth() const { return Width_; };
-	int32_t GetHeight() const { return Height_; };
-	HWND GetHwnd() const { return hwnd_; };
-
-	void SetHwnd(HWND hwnd);
 
 private:
 
@@ -32,9 +27,7 @@ private:
 	/*=====================================*/
 
 	HINSTANCE hInst_;	//インスタンスハンドル
-	HWND hwnd_;			//ウィンドウハンドル
-	int32_t Width_;		//ウィンドウの横幅
-	int32_t Height_;	//ウィンドウの縦幅
+	
 	
 	//デバッグコントローラー
 #ifdef _DEBUG

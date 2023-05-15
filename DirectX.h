@@ -7,14 +7,16 @@
 #include<string>
 #include<format>
 #include<dxgidebug.h>
+
 #include "ConvertString.h"
 #include"Window.h"
+#include"ProtectedVar.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 
-class DirectX
+class DirectX:protected protectedVar
 {
 public:
 	//コンストラクタ
@@ -33,7 +35,7 @@ private:
 	/* 　　　　   プライベート変数    　        */
 	/*=====================================*/
 
-	HWND hwnd_;
+	
 
 	//フレームバッファ数
 	static const int32_t FrameCount = 2;
