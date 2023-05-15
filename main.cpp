@@ -1,20 +1,16 @@
 #include<Windows.h>
 #include"Window.h"
-#include "DirectX.h"
+
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	Window window;
-	DirectX direct;
+
 
 	//アプリケーションの開始
 	window.StartApp();
 
-	
-
-	//DirectXの初期化
-	direct.Start();
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　        */
@@ -32,7 +28,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else
 		{
 			//ゲームの処理
-			direct.Update();
+			
 		}
 	}
 	
@@ -40,8 +36,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//アプリケーションの終了
 	window.EndApp();
-
-	direct.EndD3D();
 
 	return 0;
 
