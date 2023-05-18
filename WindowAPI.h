@@ -34,7 +34,7 @@ private:
 
 
 	//タイトル
-	const wchar_t* Title_ = L"CG2";
+	const wchar_t* Title_;
 
 	HINSTANCE hInst_;	//インスタンスハンドル
 	HWND hwnd_;			//ウィンドウハンドル

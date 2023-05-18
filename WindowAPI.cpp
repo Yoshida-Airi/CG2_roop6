@@ -13,6 +13,8 @@
 //コンストラクタ
 WindowAPI::WindowAPI()
 {
+	Title_ = L"CG2";
+
 	hInst_ = nullptr;
 	hwnd_ = nullptr;
 
