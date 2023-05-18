@@ -26,7 +26,7 @@ public:
 
 
 
-	void Start();
+	void Start(HWND hwnd);
 	void Update();
 	void EndD3D();
 
@@ -63,6 +63,7 @@ private:
 	
 	WindowAPI windowAPI_;	//ウィンドウクラス
 
+	HWND hwnd_;
 
 
 	/*=====================================*/

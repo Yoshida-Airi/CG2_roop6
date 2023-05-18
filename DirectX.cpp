@@ -22,8 +22,9 @@ DirectX::~DirectX()
 
 }
 
-void DirectX::Start()
+void DirectX::Start(HWND hwnd)
 {
+	hwnd_ = hwnd;
 	Initialize();
 }
 
@@ -199,7 +200,7 @@ bool DirectX::Initialize()
 	swapChainDesc.BufferCount = 2;//ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//モニタにうつしたら、中身を破棄
 	//コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, windowAPI_.GetHwnd(), &swapChainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapChain_);
+	hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, hwnd_, &swapChainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapChain_);
 	assert(SUCCEEDED(hr));
 
 	//-------------------------------------

@@ -13,7 +13,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	windowAPI.StartApp();
 
 	//DirectXの初期化
-	direct.Start();
+	direct.Start(windowAPI.GetHwnd());
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　        */
