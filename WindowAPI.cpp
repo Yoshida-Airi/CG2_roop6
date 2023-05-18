@@ -3,6 +3,8 @@
 #include <tchar.h>
 #include<d3d12.h>
 
+#include <iostream>
+
 
 /*=====================================*/
 /* 　　　　   パブリックメソッド　　　 　     */
@@ -14,11 +16,15 @@ WindowAPI::WindowAPI()
 	hInst_ = nullptr;
 	hwnd_ = nullptr;
 
-	Height_ = 0;
-	Width_ = 0;
+	Height_ = 720;
+	Width_ = 1280;
 
 	wrc_ = {};
 	wc_ = {};
+
+#ifdef _DEBUG
+	debugController_ = nullptr;
+#endif
 
 }
 
@@ -90,8 +96,6 @@ bool WindowAPI::InitializeWindow()
 	//ウィンドウの登録
 	RegisterClass(&wc_);
 
-	Width_ = 1280;
-	Height_ = 720;
 
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
 	wrc_ = { 0,0,Width_,Height_ };
@@ -116,14 +120,26 @@ bool WindowAPI::InitializeWindow()
 	);
 
 
+	//デバッグ
+#ifdef _DEBUG
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_))))
+	{
+		//デバッグレイヤーを有効化する
+		debugController_->EnableDebugLayer();
+		//さらにGPU側でもチェックを行うようにする
+		debugController_->SetEnableGPUBasedValidation(TRUE);
+	}
+#endif
+
+	//ウィンドウを表示する
+	ShowWindow(hwnd_, SW_SHOW);
 
 	if (hwnd_ == nullptr)
 	{
 		return false;
 	}
 
-	//ウィンドウを表示する
-	ShowWindow(hwnd_, SW_SHOW);
+	
 
 	return true;
 
@@ -140,6 +156,11 @@ void WindowAPI::EndRoop()
 //ウィンドウの終了
 void WindowAPI::EndWindow()
 {
-
+#ifdef _DEBUG
+	if (debugController_ != nullptr)
+	{
+		debugController_->Release();
+	}
+#endif
 }
 

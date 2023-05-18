@@ -191,16 +191,15 @@ bool DirectX::Initialize()
 	//-------------------------------------
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width =Width_;	//画面の幅。クライアント領域を同じものにしておく
-	swapChainDesc.Height = Height_;//画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Width =windowAPI_.GetWidth();	//画面の幅。クライアント領域を同じものにしておく
+	swapChainDesc.Height = windowAPI_.GetHeight();//画面の高さ。ウィンドウのクライアント領域を同じものにしておく
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色の形式
 	swapChainDesc.SampleDesc.Count = 1;//マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画のターゲットを利用する
 	swapChainDesc.BufferCount = 2;//ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//モニタにうつしたら、中身を破棄
 	//コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_,hwnd_, &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain_));
-	
+	hr = dxgiFactory_->CreateSwapChainForHwnd(commandQueue_, windowAPI_.GetHwnd(), &swapChainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapChain_);
 	assert(SUCCEEDED(hr));
 
 	//-------------------------------------

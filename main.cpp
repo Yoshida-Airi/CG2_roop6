@@ -5,13 +5,12 @@
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	WindowAPI window;
+	WindowAPI windowAPI;
 	DirectX direct;
 
-	//アプリケーションの開始
-	window.StartApp();
-
 	
+	//アプリケーションの開始
+	windowAPI.StartApp();
 
 	//DirectXの初期化
 	direct.Start();
@@ -32,16 +31,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else
 		{
 			//ゲームの処理
-			direct.Update();
+		/*	direct.Update();*/
 		}
 	}
 	
 
 
 	//アプリケーションの終了
-	window.EndApp();
+	windowAPI.EndApp();
 
-	direct.EndD3D();
+	//direct.EndD3D();
 
 	return 0;
 

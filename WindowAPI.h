@@ -8,7 +8,7 @@ class WindowAPI
 {
 public:
 
-
+	
 	/*=====================================*/
 	/* 　　　　   パブリックメソッド　　　 　    */
 	/*=====================================*/
@@ -22,12 +22,16 @@ public:
 	void EndApp();
 
 
+	HWND GetHwnd() const { return hwnd_; };
+	int32_t GetWidth()const { return Width_; };
+	int32_t GetHeight()const { return Height_; };
 
 private:
 
 	/*=====================================*/
 	/* 　　　　   プライベート変数    　        */
 	/*=====================================*/
+
 
 	//タイトル
 	const wchar_t* Title_ = L"CG2";
@@ -36,6 +40,13 @@ private:
 	HWND hwnd_;			//ウィンドウハンドル
 	int32_t Width_;		//ウィンドウの横幅
 	int32_t Height_;	//ウィンドウの縦幅
+
+	//デバッグコントローラー
+#ifdef _DEBUG
+	ID3D12Debug1* debugController_;
+#endif
+
+	
 
 	RECT wrc_;
 
@@ -54,6 +65,7 @@ private:
 	bool InitializeWindow();
 	//ウィンドウの終了
 	void EndWindow();
+
 
 
 
