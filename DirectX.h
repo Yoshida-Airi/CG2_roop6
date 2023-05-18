@@ -26,7 +26,7 @@ public:
 
 	//初期化
 	void Initialize(HWND hwnd);
-
+	void Run();
 private:
 
 	/*=====================================*/
@@ -49,6 +49,9 @@ private:
 	ID3D12Resource* swapChainResources[2] = { nullptr };//SwapChainからResourceを引っ張ってくる
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};//RTVの設定
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];	//RTVを二つ作るのでディスクリプタを二つ用意
+	ID3D12Fence* fence = nullptr;//初期値0でFenceを作る
+	uint64_t fenceValue = 0;	//フェンス値
+	HANDLE fenceEvent;
 	/*=====================================*/
 	/* 　　　　   プライベートメソッド　　　      */
 	/*=====================================*/
