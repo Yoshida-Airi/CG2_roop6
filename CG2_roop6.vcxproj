@@ -88,6 +88,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConvertString.cpp" />
+    <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
   </ItemGroup>
@@ -107,6 +108,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConvertString.h" />
+    <ClInclude Include="DirectX.h" />
     <ClInclude Include="WindowAPI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

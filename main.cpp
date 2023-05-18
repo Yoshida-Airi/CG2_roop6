@@ -1,16 +1,19 @@
 #include<Windows.h>
 #include"WindowAPI.h"
+#include"DirectX.h"
 
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	WindowAPI window;
-
+	DirectX direct;
 
 	//アプリケーションの開始
 	window.StartApp();
 
+	//ダイレクトXの初期化
+	direct.Initialize();
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　       */
