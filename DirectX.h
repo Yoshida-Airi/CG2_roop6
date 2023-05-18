@@ -35,7 +35,6 @@ private:
 
 	//ウィンドウ管理
 	WindowAPI winApp_;
-
 	HWND hwnd_;
 
 	IDXGIFactory7* dxgiFactory = nullptr;	//DXGIファクトリーの生成
@@ -45,7 +44,11 @@ private:
 	ID3D12CommandQueue* commandQueue = nullptr;	//コマンドキュー
 	ID3D12CommandAllocator* commandAllocator = nullptr;	//コマンドアロケータ
 	ID3D12GraphicsCommandList* commandList = nullptr;	//コマンドリスト
-
+	IDXGISwapChain4* swapChain = nullptr;	//スワップチェーン
+	ID3D12DescriptorHeap* rtvdescriptorHeap = nullptr;	//ディスクリプタヒープ
+	ID3D12Resource* swapChainResources[2] = { nullptr };//SwapChainからResourceを引っ張ってくる
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};//RTVの設定
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];	//RTVを二つ作るのでディスクリプタを二つ用意
 	/*=====================================*/
 	/* 　　　　   プライベートメソッド　　　      */
 	/*=====================================*/
@@ -61,10 +64,16 @@ private:
 	// レンダーターゲット生成
 	void CreateFinalRenderTargets();
 
-	// 深度バッファ生成
-	void CreateDepthBuffer();
+	//スワップチェーンからもってくる
+	void PullResourceSwapChain();
+
+	//RTV作成
+	void CreateRTV();
 
 	// フェンス生成
 	void CreateFence();
+
+	//コマンドのキック
+	void CommandKick();
 };
 
