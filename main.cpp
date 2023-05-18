@@ -34,7 +34,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 	}
 	
-
+	direct.End();
 
 	//アプリケーションの終了
 	window.EndApp();

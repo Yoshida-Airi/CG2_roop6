@@ -29,6 +29,7 @@ public:
 	//初期化
 	void Initialize(HWND hwnd);
 	void Run();
+	void End();
 private:
 
 	/*=====================================*/
