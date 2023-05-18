@@ -11,11 +11,13 @@
 //コンストラクタ
 WindowAPI::WindowAPI()
 {
+	Title_ = L"CG2";
+
 	hInst_ = nullptr;
 	hwnd_ = nullptr;
 	
-	Height_ = 0;
-	Width_ = 0;
+	Height_ = 720;
+	Width_ = 1280;
 
 	wrc_ = {};
 	wc_ = {};
@@ -34,6 +36,7 @@ void WindowAPI::StartApp()
 {
 	Initialize();
 }
+
 //終了
 void WindowAPI::EndApp()
 {
@@ -73,6 +76,7 @@ bool WindowAPI::Initialize()
 }
 
 
+
 //ウィンドウクラスの登録(初期化)
 bool WindowAPI::InitializeWindow()
 {
@@ -89,9 +93,6 @@ bool WindowAPI::InitializeWindow()
 
 	//ウィンドウの登録
 	RegisterClass(&wc_);
-
-	Width_ = 1280;
-	Height_ = 720;
 
 	//ウィンドウサイズを表す構造体にクライアント領域を入れる
 	wrc_ = { 0,0,Width_,Height_ };
@@ -115,7 +116,7 @@ bool WindowAPI::InitializeWindow()
 		nullptr					//オプション
 	);
 
-
+	
 
 	if (hwnd_ == nullptr)
 	{

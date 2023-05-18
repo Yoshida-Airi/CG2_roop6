@@ -4,6 +4,7 @@
 #include<d3d12.h>
 
 
+
 class WindowAPI
 {
 public:
@@ -21,6 +22,9 @@ public:
 	//アプリケーションの終了
 	void EndApp();
 
+	int32_t GetWidth() const { return Width_; };
+	int32_t GetHeight() const { return Height_; };
+	HWND GetHwnd() const { return hwnd_; }
 	
 
 private:
@@ -30,8 +34,7 @@ private:
 	/*=====================================*/
 
 	//タイトル
-	const wchar_t* Title_ = L"CG2";
-
+	const wchar_t* Title_;
 	HINSTANCE hInst_;	//インスタンスハンドル
 	HWND hwnd_;			//ウィンドウハンドル
 	int32_t Width_;		//ウィンドウの横幅
@@ -41,6 +44,8 @@ private:
 
 	//ウィンドウクラスの登録(設定をWindowsに伝える)
 	WNDCLASS wc_;
+
+
 
 	/*=====================================*/
 	/* 　　　　   プライベートメソッド　　　      */

@@ -11,9 +11,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//アプリケーションの開始
 	window.StartApp();
-
-	//ダイレクトXの初期化
-	direct.Initialize();
+	
+	direct.Initialize(window.GetHwnd());
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　       */

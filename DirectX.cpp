@@ -7,7 +7,7 @@
 //コンストラクタ
 DirectX::DirectX()
 {
-
+	hr = 0;
 }
 //デストラクタ
 DirectX::~DirectX()
@@ -16,10 +16,16 @@ DirectX::~DirectX()
 }
 
 //初期化
-void DirectX::Initialize()
+void DirectX::Initialize(HWND hwnd)
 {
+	hwnd_ = hwnd;
 	//デバイスの生成
 	InitializeDXGIDevice();
+	//コマンド初期化
+	InitializeCommand();
+	//スワップチェーン
+	CreateSwapChain();
+
 }
 
 /*=====================================*/
@@ -35,7 +41,7 @@ void DirectX::InitializeDXGIDevice()
 
 	//HRESULTはWindows系のエラーコードであり、
 	//関数が成功したかどうかをSUCCEEDEDマクロで判定できる
-	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
+	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
 	//初期化の根本的な部分でエラーが出た場合はプログラムが間違ているか
 	//どうにもできない場合が多いのでassertにしておく
 	assert(SUCCEEDED(hr));
@@ -102,30 +108,51 @@ void DirectX::InitializeDXGIDevice()
 
 // コマンド関連初期化
 void DirectX::InitializeCommand()
-{
 
+{	//-----------------------------
+	//コマンドキューを生成する
+	//------------------------------
+
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
+	//コマンドキューの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	//------------------------------------
+	//コマンドアロケータを生成する
+	//-------------------------------------
+
+	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	//コマンドアロケータの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	//---------------------------------
+	//コマンドリストを生成する
+	//--------------------------------
+	
+	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr, IID_PPV_ARGS(&commandList));
+	//コマンドリストの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
 }
 
 // スワップチェーンの生成
 void DirectX::CreateSwapChain()
 {
-
-}
-
-// レンダーターゲット生成
-void DirectX::CreateFinalRenderTargets()
-{
-
-}
-
-// 深度バッファ生成
-void DirectX::CreateDepthBuffer()
-{
-
-}
-
-// フェンス生成
-void DirectX::CreateFence()
-{
+	//----------------------------------
+	//スワップチェーンを生成する
+	//---------------------------------
+	
+	IDXGISwapChain4* swapChain = nullptr;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.Width = winApp_.GetWidth();	//画面の幅。クライアント領域を同じものにしておく
+	swapChainDesc.Height = winApp_.GetHeight();//画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//色の形式
+	swapChainDesc.SampleDesc.Count = 1;//マルチサンプルしない
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;//描画のターゲットを利用する
+	swapChainDesc.BufferCount = 2;//ダブルバッファ
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;//モニタにうつしたら、中身を破棄
+	//コマンドキュー、ウィンドウハンドル、設定を渡して生成する
+	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue, hwnd_, &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
+	assert(SUCCEEDED(hr));
 
 }
