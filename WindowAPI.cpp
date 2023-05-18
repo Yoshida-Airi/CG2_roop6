@@ -13,8 +13,7 @@
 //コンストラクタ
 WindowAPI::WindowAPI()
 {
-	Title_ = L"CG2";
-
+	
 	hInst_ = nullptr;
 	hwnd_ = nullptr;
 
@@ -23,6 +22,8 @@ WindowAPI::WindowAPI()
 
 	wrc_ = {};
 	wc_ = {};
+
+	Title_ = L"CG2";
 
 #ifdef _DEBUG
 	debugController_ = nullptr;
