@@ -2,8 +2,9 @@
 #include <windows.h>
 #include<cstdint>
 #include<d3d12.h>
+#include<dxgidebug.h>
 
-
+#pragma comment(lib,"dxguid.lib")
 
 class WindowAPI
 {
@@ -45,6 +46,7 @@ private:
 	//ウィンドウクラスの登録(設定をWindowsに伝える)
 	WNDCLASS wc_;
 
+	ID3D12Debug1* debugController_ = nullptr;
 
 
 	/*=====================================*/

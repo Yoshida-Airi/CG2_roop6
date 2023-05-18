@@ -4,11 +4,13 @@
 #include<cassert>
 #include"ConvertString.h"
 #include<format>
+#include<dxgidebug.h>
 
 #include"WindowAPI.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
+#pragma comment(lib,"dxguid.lib")
 
 class DirectX
 {
@@ -78,5 +80,8 @@ private:
 
 	//コマンドのキック
 	void CommandKick();
+
+	//解放
+	void HandleClose();
 };
 

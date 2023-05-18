@@ -118,13 +118,13 @@ bool WindowAPI::InitializeWindow()
 
 
 #ifdef _DEBUG
-	ID3D12Debug1* debugController = nullptr;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+	
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_))))
 	{
 		//デバッグレイヤーを有効化する
-		debugController->EnableDebugLayer();
+		debugController_->EnableDebugLayer();
 		//さらにGPU側でもチェックを行うようにする
-		debugController->SetEnableGPUBasedValidation(TRUE);
+		debugController_->SetEnableGPUBasedValidation(TRUE);
 	}
 #endif
 
@@ -152,6 +152,11 @@ void WindowAPI::EndRoop()
 //ウィンドウの終了
 void WindowAPI::EndWindow()
 {
-
+#ifdef _DEBUG
+	if (debugController_ != nullptr)
+	{
+		debugController_->Release();
+	}
+#endif
 }
 
