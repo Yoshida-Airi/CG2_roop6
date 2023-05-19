@@ -1,6 +1,7 @@
 #include<Windows.h>
 #include"WindowAPI.h"
 #include"DirectX.h"
+#include"Object.h"
 
 
 //Windowsアプリでのエントリーポイント(main関数)
@@ -8,11 +9,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	WindowAPI window;
 	DirectX direct;
+	Object object;
 
 	//アプリケーションの開始
 	window.StartApp();
 	
 	direct.Initialize(window.GetHwnd());
+
+	object.DrawInitialize(direct.GetDevice(), direct.GetCommandList());
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　       */
@@ -30,12 +34,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else
 		{
 			//ゲームの処理
+			object.Run(direct.GetCommandList(), direct.GetswapChain(),direct.Getbarrier() );
 			direct.Run();
+			
 		}
 	}
 	
 
-
+	object.End();
 	//アプリケーションの終了
 	window.EndApp();
 

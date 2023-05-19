@@ -42,6 +42,12 @@ void DirectX::Run()
 	CommandKick();
 }
 
+void DirectX::End()
+{
+	HandleClose();
+}
+
+
 /*=====================================*/
 /* 　　　　   プライベートメソッド　　　      */
 /*=====================================*/
@@ -263,8 +269,6 @@ void DirectX::CommandKick()
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
 
-	//TransitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
 	//今回のバリアはTransition
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	//Noneにしておく
@@ -321,5 +325,37 @@ void DirectX::CommandKick()
 	assert(SUCCEEDED(hr));
 	hr = commandList->Reset(commandAllocator, nullptr);
 	assert(SUCCEEDED(hr));
+
+}
+
+void DirectX::HandleClose()
+{
+	CloseHandle(fenceEvent);
+	fence->Release();
+	rtvdescriptorHeap->Release();
+	swapChainResources[0]->Release();
+	swapChainResources[1]->Release();
+	swapChain->Release();
+	commandList->Release();
+	commandAllocator->Release();
+	commandQueue->Release();
+	device->Release();
+	useAdapter->Release();
+	dxgiFactory->Release();
+
+	CloseWindow(hwnd_);
+
+
+
+	//リソースリークチェック
+	IDXGIDebug1* debug;
+	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug))))
+	{
+		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
+		debug->Release();
+	}
+
 
 }

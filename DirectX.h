@@ -4,11 +4,14 @@
 #include<cassert>
 #include"ConvertString.h"
 #include<format>
+#include<dxgidebug.h>
 
 #include"WindowAPI.h"
 
+
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
+#pragma comment(lib,"dxguid.lib")
 
 class DirectX
 {
@@ -27,6 +30,14 @@ public:
 	//初期化
 	void Initialize(HWND hwnd);
 	void Run();
+	void End();
+
+	ID3D12Device* GetDevice() const { return device; };
+	ID3D12GraphicsCommandList* GetCommandList()const { return commandList; };
+	IDXGISwapChain4* GetswapChain() const { return swapChain; };
+	D3D12_RESOURCE_BARRIER Getbarrier()const { return barrier; };
+	D3D12_CPU_DESCRIPTOR_HANDLE GetrtvHandles()const { return rtvHandles[2]; };
+	ID3D12Resource* GetswapChainResources() const  { return swapChainResources[2] };
 private:
 
 	/*=====================================*/
@@ -49,6 +60,7 @@ private:
 	ID3D12Resource* swapChainResources[2] = { nullptr };//SwapChainからResourceを引っ張ってくる
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};//RTVの設定
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];	//RTVを二つ作るのでディスクリプタを二つ用意
+	D3D12_RESOURCE_BARRIER barrier{};	//TransitionBarrierの設定
 	ID3D12Fence* fence = nullptr;//初期値0でFenceを作る
 	uint64_t fenceValue = 0;	//フェンス値
 	HANDLE fenceEvent;
@@ -78,5 +90,11 @@ private:
 
 	//コマンドのキック
 	void CommandKick();
+
+	//コマンドの実行
+	void CommandPlay();
+
+	//解放
+	void HandleClose();
 };
 
