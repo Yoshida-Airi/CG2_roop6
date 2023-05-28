@@ -1,5 +1,5 @@
 #include "Object.h"
-#include "ConvertString.h"
+
 
 Object::Object()
 {
@@ -12,7 +12,7 @@ Object::~Object()
 
 }
 
-void Object::DrawInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList)
+void Object::Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* commandList,Vector4& posA, Vector4& posB, Vector4& posC)
 {
 	device_ = device;
 	IntializeDXC();
@@ -25,22 +25,19 @@ void Object::DrawInitialize(ID3D12Device* device, ID3D12GraphicsCommandList* com
 
 	//頂点データ
 	VertexResource();
-	Resource();
+	Resource(posA, posB, posC);
 
 }
 
-void Object::Run
-(
-	ID3D12GraphicsCommandList* GetCommandList,
-	IDXGISwapChain4* GetswapChain,
-	D3D12_RESOURCE_BARRIER Getbarrier,
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2],
-	ID3D12Resource* swapChainResources[2],
-)
+void Object::Run(DirectX*direct)
 {
-
+	Render();
 }
 
+void Object::End()
+{
+	HandleClose();
+}
 
 //CompileShader関数
 IDxcBlob* Object::CompileShader
@@ -239,18 +236,18 @@ void Object::VertexResource()
 
 }
 
-void Object::Resource()
+void Object::Resource(Vector4& posA, Vector4& posB, Vector4& posC)
 {
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	//左下
-	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
+	vertexData[0] = { posA };
 	//上
-	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
+	vertexData[1] = { posB };
 	//右下
-	vertexData[2] = { 0.5f,-0.5f,0.0f,1.0f };
+	vertexData[2] = { posC };
 
 	
 	//クライアント領域のサイズと一緒にして画面全体に表示
@@ -286,3 +283,16 @@ void Object::Render()
 
 }
 
+void Object::HandleClose()
+{
+	vertexResource->Release();
+	graphicsPipelineState->Release();
+	signatureBlob->Release();
+	if (errorBlob)
+	{
+		errorBlob->Release();
+	}
+	rootSignature->Release();
+	pixelShaderBlob->Release();
+	vertexShaderBlob->Release();
+}

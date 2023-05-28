@@ -32,12 +32,9 @@ public:
 	void Run();
 	void End();
 
-	ID3D12Device* GetDevice() const { return device; };
-	ID3D12GraphicsCommandList* GetCommandList()const { return commandList; };
-	IDXGISwapChain4* GetswapChain() const { return swapChain; };
-	D3D12_RESOURCE_BARRIER Getbarrier()const { return barrier; };
-	D3D12_CPU_DESCRIPTOR_HANDLE GetrtvHandles()const { return rtvHandles[2]; };
-	ID3D12Resource* GetswapChainResources() const  { return swapChainResources[2] };
+	ID3D12Device* GetDevice() { return device_; };
+	ID3D12GraphicsCommandList* GetCommandQueue() { return commandList_; };
+
 private:
 
 	/*=====================================*/
@@ -48,22 +45,22 @@ private:
 	WindowAPI winApp_;
 	HWND hwnd_;
 
-	IDXGIFactory7* dxgiFactory = nullptr;	//DXGIファクトリーの生成
-	HRESULT hr;								//結果確認用
-	IDXGIAdapter4* useAdapter = nullptr;	//使用するアダプタ用の変数。
-	ID3D12Device* device = nullptr;			//デバイスの生成
-	ID3D12CommandQueue* commandQueue = nullptr;	//コマンドキュー
-	ID3D12CommandAllocator* commandAllocator = nullptr;	//コマンドアロケータ
-	ID3D12GraphicsCommandList* commandList = nullptr;	//コマンドリスト
-	IDXGISwapChain4* swapChain = nullptr;	//スワップチェーン
-	ID3D12DescriptorHeap* rtvdescriptorHeap = nullptr;	//ディスクリプタヒープ
-	ID3D12Resource* swapChainResources[2] = { nullptr };//SwapChainからResourceを引っ張ってくる
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};//RTVの設定
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];	//RTVを二つ作るのでディスクリプタを二つ用意
-	D3D12_RESOURCE_BARRIER barrier{};	//TransitionBarrierの設定
-	ID3D12Fence* fence = nullptr;//初期値0でFenceを作る
-	uint64_t fenceValue = 0;	//フェンス値
-	HANDLE fenceEvent;
+	IDXGIFactory7* dxgiFactory_ = nullptr;	//DXGIファクトリーの生成
+	HRESULT hr_;								//結果確認用
+	IDXGIAdapter4* useAdapter_ = nullptr;	//使用するアダプタ用の変数。
+	ID3D12Device* device_ = nullptr;			//デバイスの生成
+	ID3D12CommandQueue* commandQueue_ = nullptr;	//コマンドキュー
+	ID3D12CommandAllocator* commandAllocator_ = nullptr;	//コマンドアロケータ
+	ID3D12GraphicsCommandList* commandList_ = nullptr;	//コマンドリスト
+	IDXGISwapChain4* swapChain_ = nullptr;	//スワップチェーン
+	ID3D12DescriptorHeap* rtvdescriptorHeap_ = nullptr;	//ディスクリプタヒープ
+	ID3D12Resource* swapChainResources_[2] = { nullptr };//SwapChainからResourceを引っ張ってくる
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_{};//RTVの設定
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];	//RTVを二つ作るのでディスクリプタを二つ用意
+	D3D12_RESOURCE_BARRIER barrier_{};	//TransitionBarrierの設定
+	ID3D12Fence* fence_ = nullptr;//初期値0でFenceを作る
+	uint64_t fenceValue_ = 0;	//フェンス値
+	HANDLE fenceEvent_;
 	/*=====================================*/
 	/* 　　　　   プライベートメソッド　　　      */
 	/*=====================================*/

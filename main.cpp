@@ -7,16 +7,18 @@
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	WindowAPI window;
-	DirectX direct;
-	Object object;
+	WindowAPI* window=new WindowAPI;
+	DirectX* direct = new DirectX;
+	Object* object = new Object;
 
 	//アプリケーションの開始
-	window.StartApp();
+	window->StartApp();
 	
-	direct.Initialize(window.GetHwnd());
+	direct->Initialize(window->GetHwnd());
 
-	object.DrawInitialize(direct.GetDevice(), direct.GetCommandList());
+	object->Initialize(direct->GetDevice(), direct->GetCommandQueue(), );
+
+	Vector4*vertexData
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　       */
@@ -34,16 +36,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else
 		{
 			//ゲームの処理
-			object.Run(direct.GetCommandList(), direct.GetswapChain(),direct.Getbarrier() );
-			direct.Run();
+			
+			direct->Run();
 			
 		}
 	}
 	
 
-	object.End();
+	
 	//アプリケーションの終了
-	window.EndApp();
+	window->EndApp();
 
 	return 0;
 
