@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	object->Initialize(direct->GetDevice(), direct->GetCommandQueue(), );
 
-	Vector4*vertexData
+
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　       */
