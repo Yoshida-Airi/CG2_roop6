@@ -30,6 +30,9 @@ public:
 	void Initialize(HWND hwnd);
 	void Run();
 	void End();
+
+
+	
 private:
 
 	/*=====================================*/
@@ -43,10 +46,10 @@ private:
 	IDXGIFactory7* dxgiFactory = nullptr;	//DXGIファクトリーの生成
 	HRESULT hr;								//結果確認用
 	IDXGIAdapter4* useAdapter = nullptr;	//使用するアダプタ用の変数。
-	ID3D12Device* device = nullptr;			//デバイスの生成
-	ID3D12CommandQueue* commandQueue = nullptr;	//コマンドキュー
-	ID3D12CommandAllocator* commandAllocator = nullptr;	//コマンドアロケータ
-	ID3D12GraphicsCommandList* commandList = nullptr;	//コマンドリスト
+	static ID3D12Device* device_;	//デバイスの生成
+	static ID3D12CommandQueue* commandQueue_;	//コマンドキュー
+	static ID3D12CommandAllocator* commandAllocator_;	//コマンドアロケータ
+	static ID3D12GraphicsCommandList* commandList_;	//コマンドリスト
 	IDXGISwapChain4* swapChain = nullptr;	//スワップチェーン
 	ID3D12DescriptorHeap* rtvdescriptorHeap = nullptr;	//ディスクリプタヒープ
 	ID3D12Resource* swapChainResources[2] = { nullptr };//SwapChainからResourceを引っ張ってくる
@@ -85,4 +88,5 @@ private:
 	//解放
 	void HandleClose();
 };
+
 
