@@ -31,8 +31,17 @@ public:
 	void Run();
 	void End();
 
-
-	
+	static HRESULT hr_;								//結果確認用
+	static ID3D12Device* device_;	//デバイスの生成
+	static ID3D12GraphicsCommandList* commandList_;	//コマンドリスト
+	static IDXGISwapChain4* swapChain_;	//スワップチェーン
+	static ID3D12Resource* swapChainResources_[2];//SwapChainからResourceを引っ張ってくる
+	static D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];	//RTVを二つ作るのでディスクリプタを二つ用意
+	static ID3D12CommandQueue* commandQueue_;	//コマンドキュー
+	static ID3D12CommandAllocator* commandAllocator_;	//コマンドアロケータ
+	static ID3D12Fence* fence_;//初期値0でFenceを作る
+	static uint64_t fenceValue_;	//フェンス値
+	static HANDLE fenceEvent_;
 private:
 
 	/*=====================================*/
@@ -42,22 +51,12 @@ private:
 	//ウィンドウ管理
 	WindowAPI winApp_;
 	HWND hwnd_;
-
 	IDXGIFactory7* dxgiFactory = nullptr;	//DXGIファクトリーの生成
-	HRESULT hr;								//結果確認用
 	IDXGIAdapter4* useAdapter = nullptr;	//使用するアダプタ用の変数。
-	static ID3D12Device* device_;	//デバイスの生成
-	static ID3D12CommandQueue* commandQueue_;	//コマンドキュー
-	static ID3D12CommandAllocator* commandAllocator_;	//コマンドアロケータ
-	static ID3D12GraphicsCommandList* commandList_;	//コマンドリスト
-	IDXGISwapChain4* swapChain = nullptr;	//スワップチェーン
 	ID3D12DescriptorHeap* rtvdescriptorHeap = nullptr;	//ディスクリプタヒープ
-	ID3D12Resource* swapChainResources[2] = { nullptr };//SwapChainからResourceを引っ張ってくる
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};//RTVの設定
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];	//RTVを二つ作るのでディスクリプタを二つ用意
-	ID3D12Fence* fence = nullptr;//初期値0でFenceを作る
-	uint64_t fenceValue = 0;	//フェンス値
-	HANDLE fenceEvent;
+	
+	
 	/*=====================================*/
 	/* 　　　　   プライベートメソッド　　　      */
 	/*=====================================*/
