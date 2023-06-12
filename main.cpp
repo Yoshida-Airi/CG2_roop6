@@ -1,18 +1,20 @@
 #include<Windows.h>
 #include"WindowAPI.h"
 #include"DirectX.h"
-
+#include"Triangle.h"
 
 //Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	WindowAPI window;
-	DirectX direct;
+	WindowAPI* window = new WindowAPI;
+	DirectX* direct = new DirectX;
+	Triangle* triangle = new Triangle;
+
 
 	//アプリケーションの開始
-	window.StartApp();
-
-	direct.Initialize(window.GetHwnd());
+	window->StartApp();
+	direct->Initialize(window->GetHwnd());
+	triangle->Initialize();
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　       */
@@ -30,14 +32,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else
 		{
 			//ゲームの処理
-			direct.Run();
+			triangle->Run();
 		}
 	}
 
-	direct.End();
+	triangle->End();
+	direct->End();
+
 
 	//アプリケーションの終了
-	window.EndApp();
+	window->EndApp();
 
 	return 0;
 

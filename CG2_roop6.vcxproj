@@ -82,6 +82,7 @@
     <ClCompile Include="ConvertString.cpp" />
     <ClCompile Include="DirectX.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="WindowAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +100,7 @@
   <ItemGroup>
     <ClInclude Include="ConvertString.h" />
     <ClInclude Include="DirectX.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="WindowAPI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
