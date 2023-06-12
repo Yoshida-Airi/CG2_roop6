@@ -6,6 +6,6 @@ struct PixelShaderOutput
 PixelShaderOutput main()
 {
 	PixelShaderOutput output;
-	output.color = float32_t4(1.0, 1.0, 1.0, 1.0);
+	output.color = float32_t4(1.0, 1.0, 1.0, 1.0);	//白色
 	return output;
 }
