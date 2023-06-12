@@ -50,9 +50,11 @@ void DirectX::End()
 }
 
 
+
 /*=====================================*/
 /* 　　　　   プライベートメソッド　　　      */
 /*=====================================*/
+
 
 
 void DirectX::InitializeDXGIDevice()
@@ -304,14 +306,12 @@ void DirectX::HandleClose()
 }
 
 
+
 ID3D12Device* DirectX::device_;
 ID3D12CommandQueue* DirectX::commandQueue_;
 ID3D12CommandAllocator* DirectX::commandAllocator_;
 ID3D12GraphicsCommandList* DirectX::commandList_;
-HRESULT DirectX::hr_;
 IDXGISwapChain4* DirectX::swapChain_;	//スワップチェーン
 ID3D12Resource* DirectX::swapChainResources_[2];//SwapChainからResourceを引っ張ってくる
 D3D12_CPU_DESCRIPTOR_HANDLE DirectX::rtvHandles_[2];	//RTVを二つ作るのでディスクリプタを二つ用意
 ID3D12Fence* DirectX::fence_;//初期値0でFenceを作る
-uint64_t DirectX::fenceValue_;	//フェンス値
-HANDLE DirectX::fenceEvent_;

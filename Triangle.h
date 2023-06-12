@@ -67,8 +67,12 @@ public:
 private:
 	DirectX* direct_ = new DirectX;
 	WindowAPI winApp_;
-	
 
+	const int vertexCount = 3;	//三角形の頂点数
+	const int objectCount = 10;	//三角形の数
+	const int totalvartex = vertexCount * objectCount;	//合計の頂点数
+
+	HRESULT hr_;				//結果確認用
 	IDxcUtils* dxcUtils_ = nullptr;
 	IDxcCompiler3* dxcCompiler_ = nullptr;
 	IDxcIncludeHandler* includeHandler_ = nullptr;
@@ -81,18 +85,21 @@ private:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc_{};	//PSO
 	ID3D12PipelineState* graphicsPipelineState_ = nullptr;	//実際に生成
 	D3D12_RESOURCE_DESC vertexResourceDesc_{};	//頂点リソースの設定
-	ID3D12Resource* vertexResource_ = nullptr;	//実際に頂点リソースを作る
+	ID3D12Resource* vertexResource_ = { nullptr };	//実際に頂点リソースを作る
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};//頂点バッファビューを作成する
 	D3D12_VIEWPORT viewport_{};	//ビューポート
 	D3D12_RECT scissorRect_{};//シザー矩形
 	UINT backBufferIndex;
-
+	
 
 	ID3DBlob* signatureBlob_ = nullptr;//シリアライズしてバイナリにする
 	ID3DBlob* errorBlob_ = nullptr;
 	
 	IDxcBlob* vertexShaderBlob_;
 	IDxcBlob* pixelShaderBlob_;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE RTVHandle_[2];
+	uint64_t fenceValue_;
 
 	//コンパイルシェーダー関数
 	IDxcBlob* CompileShader

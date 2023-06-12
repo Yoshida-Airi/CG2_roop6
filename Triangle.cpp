@@ -4,7 +4,7 @@
 
 Triangle::Triangle()
 {
-	
+	fenceValue_ = direct_->GetFenceValue();
 }
 
 Triangle::~Triangle()
@@ -118,14 +118,13 @@ IDxcBlob* Triangle::CompileShader
 
 void Triangle::IntializeDXC()
 {
+	hr_ = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
+	assert(SUCCEEDED(hr_));
+	hr_ = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
+	assert(SUCCEEDED(hr_));
 
-	direct_->hr_= DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils_));
-	assert(SUCCEEDED(direct_->hr_));
-	direct_->hr_ = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler_));
-	assert(SUCCEEDED(direct_->hr_));
-
-	direct_->hr_= dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
-	assert(SUCCEEDED(direct_->hr_));
+	hr_ = dxcUtils_->CreateDefaultIncludeHandler(&includeHandler_);
+	assert(SUCCEEDED(hr_));
 }
 
 void Triangle::CreateSignature()
@@ -133,15 +132,15 @@ void Triangle::CreateSignature()
 
 	descriptionRootSignature_.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	//シリアライズしてバイナリにする
-	direct_->hr_ = D3D12SerializeRootSignature(&descriptionRootSignature_, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob_);
-	if (FAILED(direct_->hr_))
+	hr_ = D3D12SerializeRootSignature(&descriptionRootSignature_, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob_);
+	if (FAILED(hr_))
 	{
 		Log(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
 		assert(false);
 	}
 
-	direct_->hr_ = direct_->device_->CreateRootSignature(0, signatureBlob_->GetBufferPointer(), signatureBlob_->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
-	assert(SUCCEEDED(direct_->hr_));
+	hr_ =direct_->GetDevice()->CreateRootSignature(0, signatureBlob_->GetBufferPointer(), signatureBlob_->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
+	assert(SUCCEEDED(hr_));
 }
 
 void Triangle::InputLayout()
@@ -198,20 +197,23 @@ void Triangle::CreatePSO()
 	graphicsPipelineStateDesc_.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc_.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
-	direct_->hr_ = direct_->device_->CreateGraphicsPipelineState(&graphicsPipelineStateDesc_, IID_PPV_ARGS(&graphicsPipelineState_));
-	assert(SUCCEEDED(direct_->hr_));
+	hr_ = direct_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc_, IID_PPV_ARGS(&graphicsPipelineState_));
+	assert(SUCCEEDED(hr_));
 }
 
 
 void Triangle::VertexResource()
 {
+
+	//頂点データ
+	
 	//頂点リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
 	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;	//UplodeHeapを使う
 
 	//バッファリソース。テクスチャの場合は別の設定する
 	vertexResourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc_.Width = sizeof(Vector4) * 3;	//リソースのサイズ。今回はVector4を3頂点分
+	vertexResourceDesc_.Width = sizeof(Vector4) * totalvartex;	//リソースのサイズ。今回はVector4を3頂点分
 	//バッファの場合はこれらは1にする決まり
 	vertexResourceDesc_.Height = 1;
 	vertexResourceDesc_.DepthOrArraySize = 1;
@@ -220,15 +222,17 @@ void Triangle::VertexResource()
 	//バッファの場合はこれにする決まり
 	vertexResourceDesc_.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	direct_->hr_ = direct_->device_->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &vertexResourceDesc_, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResource_));
-	assert(SUCCEEDED(direct_->hr_));
+	hr_ =direct_->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &vertexResourceDesc_, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResource_));
+
+	assert(SUCCEEDED(hr_));
 
 
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 3;
+	vertexBufferView_.SizeInBytes = sizeof(Vector4) * totalvartex;
 	//1頂点あたりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(Vector4);
 
@@ -240,21 +244,33 @@ void Triangle::Resource()
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	//左下
-	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
-	//上
-	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
-	//右下
-	vertexData[2] = { 0.5f,-0.5f,0.0f,1.0f };
+
+	const float size = 0.1f;
+
+	for (int i = 0; i < objectCount; i++)
+	{
+		// 三角形の位置を計算
+		float positionX = i * 0.0f;
+		float positoinY = i * 0.2f-1.3f;
+
+		// 左下
+		vertexData[i * 3] = { -size + positionX, -size + positoinY, 0.0f, 1.5f };
+		// 上
+		vertexData[i * 3 + 1] = { 0.0f + positionX, size + positoinY -0.02f, 0.0f, 1.5f };
+		// 右下
+		vertexData[i * 3 + 2] = { size + positionX, -size + positoinY, 0.0f, 1.5f };
+	}
 
 
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport_.Width = static_cast<float>(winApp_.GetWidth());
 	viewport_.Height = static_cast<float>(winApp_.GetHeight());
+
 	viewport_.TopLeftX = 0;
 	viewport_.TopLeftY = 0;
 	viewport_.MinDepth = 0.0f;
 	viewport_.MaxDepth = 1.0f;
+
 
 	//基本的にビューポートと同じ矩形が構成されるようにする
 	scissorRect_.left = 0;
@@ -269,7 +285,7 @@ void Triangle::Render()
 {
 
 	//これから書き込むバッグバッファのインデックスを取得
-	backBufferIndex = direct_->swapChain_->GetCurrentBackBufferIndex();
+	backBufferIndex = direct_->GetSwapChain()->GetCurrentBackBufferIndex();
 
 
 	//TransitionBarrierの設定
@@ -279,73 +295,74 @@ void Triangle::Render()
 	//Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	//バリアを張る対象リソース。現在のバッグバッファに対して行う
-	barrier.Transition.pResource = direct_->swapChainResources_[backBufferIndex];
+	barrier.Transition.pResource = direct_->GetSwapChainResource(backBufferIndex);
 	//遷移前(現在)のResourceState
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	//遷移後のResourceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	//TransitionBarrierを張る
-	direct_->commandList_->ResourceBarrier(1, &barrier);
+	direct_->GetCommandList()->ResourceBarrier(1, &barrier);
 	//描画先のRTVを設定する
-	direct_->commandList_->OMSetRenderTargets(1, &direct_->rtvHandles_[backBufferIndex], false, nullptr);
+	direct_->GetCommandList()->OMSetRenderTargets(1, &direct_->GetRTVHandle(backBufferIndex), false, nullptr);
 	//指定した色で画面全体をクリアする
 	float clearcolor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色。RGBAの順
-	direct_->commandList_->ClearRenderTargetView(direct_->rtvHandles_[backBufferIndex], clearcolor, 0, nullptr);
+	direct_->GetCommandList()->ClearRenderTargetView(direct_->GetRTVHandle(backBufferIndex), clearcolor, 0, nullptr);
 
 
 	//コマンドを積む
-	direct_->commandList_->RSSetViewports(1, &viewport_);	//Viewportを設定
-	direct_->commandList_->RSSetScissorRects(1, &scissorRect_);	//Scirssorを設定
+	direct_->GetCommandList()->RSSetViewports(1, &viewport_);	//Viewportを設定
+	direct_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);	//Scirssorを設定
 	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	direct_->commandList_->SetGraphicsRootSignature(rootSignature_);
-	direct_->commandList_->SetPipelineState(graphicsPipelineState_);	//PSOを設定
-	direct_->commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);	//VBVを設定
-	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
-	direct_->commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
-	direct_->commandList_->DrawInstanced(3, 1, 0, 0);
+	direct_->GetCommandList()->SetGraphicsRootSignature(rootSignature_);
+	direct_->GetCommandList()->SetPipelineState(graphicsPipelineState_);	//PSOを設定
+	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);	//VBVを設定
 
+	for (int i = 0; i < objectCount; i++)
+	{
+		//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
+		direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
+		direct_->GetCommandList()->DrawInstanced(3, 1, i * 3, 0);
+	}
 
 	//画面に描く処理はすべて終わり、画面に移すので、状態を遷移
 	//今回はRenderTargetからPresentにする
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	//TransitionBarrierを張る
-	direct_->commandList_->ResourceBarrier(1, &barrier);
+	direct_->GetCommandList()->ResourceBarrier(1, &barrier);
 	//コマンドリストの内容を確定させる。全てのコマンドを積んでからCloseすること
-	direct_->hr_ = direct_->commandList_->Close();
-	assert(SUCCEEDED(direct_->hr_));
+	hr_ = direct_->GetCommandList()->Close();
+	assert(SUCCEEDED(hr_));
 
 
 	//GPUにコマンドリストの実行を行わせる
-	ID3D12CommandList* commandLists[] = { direct_->commandList_ };
-	direct_->commandQueue_->ExecuteCommandLists(1, commandLists);
+	ID3D12CommandList* commandLists[] = { direct_->GetCommandList() };
+	direct_->GetCommandQueue()->ExecuteCommandLists(1, commandLists);
 	//GPUとOSに画面の交換を行うよう通知する
-	direct_->swapChain_->Present(1, 0);
+	direct_->GetSwapChain()->Present(1, 0);
 
 	//Fenceの値を更新
-	direct_->fenceValue_++;
+	fenceValue_++;
 	//GPUがここまでたどり着いたときに、Fenceの値を指定した値に代入するようにSignalを送る
-	direct_->commandQueue_->Signal(direct_->fence_,direct_->fenceValue_);
+	direct_->GetCommandQueue()->Signal(direct_->GetFence(), fenceValue_);
 
 	//Fenceの値が指定したSignal値にたどり着いているか確認する
 	//GetCompletedValueの初期値はFence作成時に渡した初期値
-	if (direct_->fence_->GetCompletedValue() < direct_->fenceValue_)
+	if (direct_->GetFence()->GetCompletedValue() < fenceValue_)
 	{
 		//指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
-		direct_->fence_->SetEventOnCompletion(direct_->fenceValue_, direct_->fenceEvent_);
+		direct_->GetFence()->SetEventOnCompletion(fenceValue_, direct_->GetFenceEvent());
 		//イベント待つ
-		WaitForSingleObject(direct_->fenceEvent_, INFINITE);
+		WaitForSingleObject(direct_->GetFenceEvent(), INFINITE);
 	}
 
 	//次のフレーム用のコマンドリストを準備
-	direct_->hr_ = direct_->commandAllocator_->Reset();
-	assert(SUCCEEDED(direct_->hr_));
-	direct_->hr_ = direct_->commandList_->Reset(direct_->commandAllocator_, nullptr);
-	assert(SUCCEEDED(direct_->hr_));
-
-
-
+	hr_ = direct_->GetCommandAllocator()->Reset();
+	assert(SUCCEEDED(hr_));
+	hr_ = direct_->GetCommandList()->Reset(direct_->GetCommandAllocator(), nullptr);
+	assert(SUCCEEDED(hr_));
+ 
 }
 
 void Triangle::HandleClose()
