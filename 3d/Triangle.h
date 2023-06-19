@@ -45,22 +45,19 @@ public:
 	~Triangle();
 
 	/// <summary>
-	/// 初期化
+	/// 初期化処理
 	/// </summary>
-	/// <param name="device"></param>
-	/// <param name="commandList"></param>
 	void Initialize();
 
 	/// <summary>
 	/// 更新処理
 	/// </summary>
-	/// <param name="direct"></param>
 	void Run();
 
 	/// <summary>
 	/// 三角形描画
 	/// </summary>
-	static void Draw(float x1, float y1, float x2, float y2, float x3, float y3);
+	void Draw(float x1, float y1, float x2, float y2, float x3, float y3);
 
 	/// <summary>
 	/// 終了(解放処理)
@@ -90,11 +87,12 @@ private:
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc_{};	//PSO
 	ID3D12PipelineState* graphicsPipelineState_ = nullptr;	//実際に生成
 	D3D12_RESOURCE_DESC vertexResourceDesc_{};	//頂点リソースの設定
-	ID3D12Resource* vertexResource_ = {nullptr};	//実際に頂点リソースを作る
+	ID3D12Resource* vertexResource_ ;	//実際に頂点リソースを作る
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};//頂点バッファビューを作成する
 	D3D12_VIEWPORT viewport_{};	//ビューポート
 	D3D12_RECT scissorRect_{};//シザー矩形
 	UINT backBufferIndex;
+
 
 
 	ID3DBlob* signatureBlob_ = nullptr;//シリアライズしてバイナリにする
@@ -161,7 +159,7 @@ private:
 	/// <summary>
 	/// リソースに書き込む
 	/// </summary>
-	static void Resource(float x1, float y1, float x2, float y2, float x3, float y3);
+	void Resource(float x1, float y1, float x2, float y2, float x3, float y3);
 
 	/// <summary>
 	/// 描画処理

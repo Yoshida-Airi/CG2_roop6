@@ -243,13 +243,12 @@ void Triangle::VertexResource()
 
 void Triangle::Resource(float x1, float y1, float x2, float y2, float x3, float y3)
 {
+	const float size = 0.1f;
+
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	const float size = 0.1f;
-
 
 	//// 三角形の位置を計算
 	//float positionX = i * 0.0f;
@@ -270,7 +269,12 @@ void Triangle::Resource(float x1, float y1, float x2, float y2, float x3, float 
 	vertexData[2] = { x3,y3,0.0f,2.5f };
 
 
-	
+}
+
+
+void Triangle::Render()
+{
+
 
 
 	//クライアント領域のサイズと一緒にして画面全体に表示
@@ -288,12 +292,6 @@ void Triangle::Resource(float x1, float y1, float x2, float y2, float x3, float 
 	scissorRect_.right = winApp_.GetWidth();
 	scissorRect_.top = 0;
 	scissorRect_.bottom = winApp_.GetHeight();
-
-}
-
-
-void Triangle::Render()
-{
 
 	//これから書き込むバッグバッファのインデックスを取得
 	backBufferIndex = direct_->GetSwapChain()->GetCurrentBackBufferIndex();
