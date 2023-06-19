@@ -26,7 +26,7 @@ public:
 	int32_t GetWidth() const { return Width_; };
 	int32_t GetHeight() const { return Height_; };
 	HWND GetHwnd() const { return hwnd_; }
-
+	static bool ProcessMessage();
 
 private:
 

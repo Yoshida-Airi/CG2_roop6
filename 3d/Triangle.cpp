@@ -21,11 +21,6 @@ void Triangle::Initialize()
 	RasterizerState();
 	ShaderCompile();
 	CreatePSO();
-
-	//頂点データ
-	VertexResource();
-	Resource();
-
 }
 
 void Triangle::Run()
@@ -36,6 +31,14 @@ void Triangle::Run()
 void Triangle::End()
 {
 	HandleClose();
+}
+
+void Triangle::Draw(float x1, float y1, float x2, float y2, float x3, float y3)
+{
+
+	//頂点データ
+	VertexResource();
+	Resource(x1, y1, x2, y2, x3, y3);
 }
 
 //CompileShader関数
@@ -238,28 +241,43 @@ void Triangle::VertexResource()
 
 }
 
-void Triangle::Resource()
+void Triangle::Resource(float x1, float y1, float x2, float y2, float x3, float y3)
 {
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	vertexResource_[objectCount_]->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	objectCount_++;
 
 	const float size = 0.1f;
+	/*float x1=0.5f;
+	float y1=-0.5f;
+	float x2=0.0f;
+	float y2=0.5f;
+	float x3=0.5f;
+	float y3=0.5f;*/
 
-	for (int i = 0; i < objectCount; i++)
-	{
-		// 三角形の位置を計算
-		float positionX = i * 0.0f;
-		float positoinY = i * 0.2f - 1.3f;
+	//// 三角形の位置を計算
+	//float positionX = i * 0.0f;
+	//float positoinY = i * 0.2f - 1.3f;
 
-		// 左下
-		vertexData[i * 3] = { -size + positionX, -size + positoinY, 0.0f, 1.5f };
-		// 上
-		vertexData[i * 3 + 1] = { 0.0f + positionX, size + positoinY - 0.02f, 0.0f, 1.5f };
-		// 右下
-		vertexData[i * 3 + 2] = { size + positionX, -size + positoinY, 0.0f, 1.5f };
-	}
+	//// 左下
+	//vertexData[i * 3] = { -size + positionX, -size + positoinY, 0.0f, 1.5f };
+	//// 上
+	//vertexData[i * 3 + 1] = { 0.0f + positionX, size + positoinY - 0.02f, 0.0f, 1.5f };
+	//// 右下
+	//vertexData[i * 3 + 2] = { size + positionX, -size + positoinY, 0.0f, 1.5f };
+
+	//左下
+	vertexData[0] = { x1,y1,0.0f,2.5f };
+	//上
+	vertexData[1] = { x2,y2,0.0f,2.5f };
+	//右下
+	vertexData[2] = { x3,y3,0.0f,2.5f };
+
+
+	
 
 
 	//クライアント領域のサイズと一緒にして画面全体に表示
@@ -317,7 +335,7 @@ void Triangle::Render()
 	direct_->GetCommandList()->SetPipelineState(graphicsPipelineState_);	//PSOを設定
 	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);	//VBVを設定
 
-	for (int i = 0; i < objectCount; i++)
+	for (int i = 0; i < objectCount_; i++)
 	{
 		//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
 		direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
