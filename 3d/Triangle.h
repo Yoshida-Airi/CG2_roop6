@@ -60,21 +60,21 @@ public:
 	/// <summary>
 	/// 三角形描画
 	/// </summary>
-	void Draw(float x1, float y1, float x2, float y2, float x3, float y3);
+	static void Draw(float x1, float y1, float x2, float y2, float x3, float y3);
 
 	/// <summary>
 	/// 終了(解放処理)
 	/// </summary>
 	void End();
 
-	static int objectCount_ = 0;	//三角形の数
+
 
 private:
 	DirectX* direct_ = new DirectX;
 	WindowAPI winApp_;
 
 	const int vertexCount = 3;	//三角形の頂点数
-
+	int objectCount_ = 1;	//三角形の数
 	const int totalvartex = vertexCount * objectCount_;	//合計の頂点数
 
 	HRESULT hr_;				//結果確認用
@@ -91,7 +91,7 @@ private:
 	ID3D12PipelineState* graphicsPipelineState_ = nullptr;	//実際に生成
 	D3D12_RESOURCE_DESC vertexResourceDesc_{};	//頂点リソースの設定
 	ID3D12Resource* vertexResource_ = {nullptr};	//実際に頂点リソースを作る
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_[objectCount_]{nullptr};//頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};//頂点バッファビューを作成する
 	D3D12_VIEWPORT viewport_{};	//ビューポート
 	D3D12_RECT scissorRect_{};//シザー矩形
 	UINT backBufferIndex;
@@ -161,7 +161,7 @@ private:
 	/// <summary>
 	/// リソースに書き込む
 	/// </summary>
-	void Resource(float x1, float y1, float x2, float y2, float x3, float y3);
+	static void Resource(float x1, float y1, float x2, float y2, float x3, float y3);
 
 	/// <summary>
 	/// 描画処理

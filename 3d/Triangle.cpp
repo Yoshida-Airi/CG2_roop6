@@ -21,6 +21,9 @@ void Triangle::Initialize()
 	RasterizerState();
 	ShaderCompile();
 	CreatePSO();
+
+	//頂点データ
+	VertexResource();
 }
 
 void Triangle::Run()
@@ -35,9 +38,6 @@ void Triangle::End()
 
 void Triangle::Draw(float x1, float y1, float x2, float y2, float x3, float y3)
 {
-
-	//頂点データ
-	VertexResource();
 	Resource(x1, y1, x2, y2, x3, y3);
 }
 
@@ -216,7 +216,7 @@ void Triangle::VertexResource()
 
 	//バッファリソース。テクスチャの場合は別の設定する
 	vertexResourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc_.Width = sizeof(Vector4) * totalvartex;	//リソースのサイズ。今回はVector4を3頂点分
+	vertexResourceDesc_.Width = sizeof(Vector4) * 30;	//リソースのサイズ。今回はVector4を3頂点分
 	//バッファの場合はこれらは1にする決まり
 	vertexResourceDesc_.Height = 1;
 	vertexResourceDesc_.DepthOrArraySize = 1;
@@ -235,7 +235,7 @@ void Triangle::VertexResource()
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(Vector4) * totalvartex;
+	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 30;
 	//1頂点あたりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(Vector4);
 
@@ -246,17 +246,10 @@ void Triangle::Resource(float x1, float y1, float x2, float y2, float x3, float 
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
-	vertexResource_[objectCount_]->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	objectCount_++;
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
 	const float size = 0.1f;
-	/*float x1=0.5f;
-	float y1=-0.5f;
-	float x2=0.0f;
-	float y2=0.5f;
-	float x3=0.5f;
-	float y3=0.5f;*/
+
 
 	//// 三角形の位置を計算
 	//float positionX = i * 0.0f;
@@ -335,13 +328,12 @@ void Triangle::Render()
 	direct_->GetCommandList()->SetPipelineState(graphicsPipelineState_);	//PSOを設定
 	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);	//VBVを設定
 
-	for (int i = 0; i < objectCount_; i++)
-	{
-		//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
-		direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
-		direct_->GetCommandList()->DrawInstanced(3, 1, i * 3, 0);
-	}
+
+	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
+	direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
+	direct_->GetCommandList()->DrawInstanced(30, 1, 0, 0);
+
 
 	//画面に描く処理はすべて終わり、画面に移すので、状態を遷移
 	//今回はRenderTargetからPresentにする
