@@ -31,18 +31,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	/* 　　　　   メインループ　　    　       */
 	/*=====================================*/
 
+	MSG msg{};
+	while (msg.message != WM_QUIT)
+	{
 		//Windowsにメッセージが来てたら最優先で処理させる
-		while (window->ProcessMessage() == 0) 
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
 		{
 			triangle->Draw(x1, y1, x2, y2, x3, y3);
-			triangle->Draw(x1 + size, y1 + size, x2 + size, y2 + size, x3 + size, y3 + size);
+			triangle->Draw(x1+size, y1 + size, x2 + size, y2 + size, x3 + size, y3 + size);
 
 			//ゲームの処理
 			triangle->Run();
 
 
 		}
-	
+	}
 
 	triangle->End();
 	direct->End();
