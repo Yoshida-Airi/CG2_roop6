@@ -216,7 +216,7 @@ void Triangle::VertexResource()
 
 	//バッファリソース。テクスチャの場合は別の設定する
 	vertexResourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc_.Width = sizeof(Vector4) * 30;	//リソースのサイズ。今回はVector4を3頂点分
+	vertexResourceDesc_.Width = sizeof(Vector4) * indexVertex_;	//リソースのサイズ。今回はVector4を3頂点分
 	//バッファの場合はこれらは1にする決まり
 	vertexResourceDesc_.Height = 1;
 	vertexResourceDesc_.DepthOrArraySize = 1;
@@ -235,7 +235,7 @@ void Triangle::VertexResource()
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 30;
+	vertexBufferView_.SizeInBytes = sizeof(Vector4) * static_cast<UINT>(indexVertex_);
 	//1頂点あたりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(Vector4);
 
@@ -243,12 +243,12 @@ void Triangle::VertexResource()
 
 void Triangle::Resource(float x1, float y1, float x2, float y2, float x3, float y3)
 {
-	const float size = 0.1f;
+	indexVertex_ = indexTriangle_ * kVertexCountTriangle;
 
 	//頂点リソースにデータを書き込む
 	Vector4* vertexData = nullptr;
 	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData[indexTriangle_]));
 
 	//// 三角形の位置を計算
 	//float positionX = i * 0.0f;
@@ -262,11 +262,28 @@ void Triangle::Resource(float x1, float y1, float x2, float y2, float x3, float 
 	//vertexData[i * 3 + 2] = { size + positionX, -size + positoinY, 0.0f, 1.5f };
 
 	//左下
-	vertexData[0] = { x1,y1,0.0f,2.5f };
+	vertexData[indexTriangle_*3] = { x1,y1,0.0f,2.5f };
 	//上
-	vertexData[1] = { x2,y2,0.0f,2.5f };
+	vertexData[indexTriangle_*3+1] = { x2,y2,0.0f,2.5f };
 	//右下
-	vertexData[2] = { x3,y3,0.0f,2.5f };
+	vertexData[indexTriangle_*3+2] = { x3,y3,0.0f,2.5f };
+
+	////コマンドを積む
+	//direct_->GetCommandList()->RSSetViewports(1, &viewport_);	//Viewportを設定
+	//direct_->GetCommandList()->RSSetScissorRects(1, &scissorRect_);	//Scirssorを設定
+	////RootSignatureを設定。PSOに設定しているけど別途設定が必要
+	//direct_->GetCommandList()->SetGraphicsRootSignature(rootSignature_);
+	//direct_->GetCommandList()->SetPipelineState(graphicsPipelineState_);	//PSOを設定
+	//direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);	//VBVを設定
+
+
+	////形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
+	//direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	////描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
+	//direct_->GetCommandList()->DrawInstanced(kVertexCountTriangle, 1, static_cast<UINT>(indexVertex_), 0);
+
+
+	indexTriangle_++;
 
 
 }
@@ -330,7 +347,7 @@ void Triangle::Render()
 	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
 	direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
-	direct_->GetCommandList()->DrawInstanced(30, 1, 0, 0);
+	direct_->GetCommandList()->DrawInstanced(kVertexCountTriangle, 1, static_cast<UINT>(indexVertex_), 0);
 
 
 	//画面に描く処理はすべて終わり、画面に移すので、状態を遷移
