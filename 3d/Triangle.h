@@ -93,7 +93,9 @@ private:
 	D3D12_RECT scissorRect_{};//シザー矩形
 	UINT backBufferIndex;
 
-
+	uint32_t indexTriangle_ = 0;
+	static const UINT kVertexCountTriangle = 3;
+	size_t indexVertex_;
 
 	ID3DBlob* signatureBlob_ = nullptr;//シリアライズしてバイナリにする
 	ID3DBlob* errorBlob_ = nullptr;

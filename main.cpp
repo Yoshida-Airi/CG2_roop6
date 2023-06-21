@@ -43,7 +43,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else
 		{
 			triangle->Draw(x1, y1, x2, y2, x3, y3);
-			triangle->Draw(x1+size, y1 + size, x2 + size, y2 + size, x3 + size, y3 + size);
+	/*		triangle->Draw(x1+size, y1 + size, x2 + size, y2 + size, x3 + size, y3 + size);*/
 
 			//ゲームの処理
 			triangle->Run();
