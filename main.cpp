@@ -1,7 +1,7 @@
 #include<Windows.h>
 #include"WindowAPI.h"
 #include"DirectX.h"
-#include"Enguin.h"
+#include"Engine.h"
 
 #include"Triangle.h"
 
@@ -96,11 +96,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 
 	engine->End();
+	window->EndApp();
 	direct->End();
 	
 
-	//アプリケーションの終了
-	window->EndApp();
+	
 
 	return 0;
 

@@ -1,4 +1,4 @@
-#include "Enguin.h"
+#include "Engine.h"
 
 
 
@@ -23,7 +23,7 @@ void Engine::Initialize()
 	CreatePSO();
 
 
-	for (int i = 0; i <= 10; i++)
+	for (int i = 0; i < 11; i++)
 	{
 		triangle_[i] = new Triangle();
 		triangle_[i]->Initialize(direct_);
@@ -34,7 +34,7 @@ void Engine::Initialize()
 	VertexResource();
 
 
-	
+
 
 
 }
@@ -51,7 +51,7 @@ void Engine::RunEnd()
 
 void Engine::End()
 {
-	
+
 	HandleClose();
 }
 
@@ -292,7 +292,7 @@ void Engine::Render()
 	backBufferIndex = direct_->GetSwapChain()->GetCurrentBackBufferIndex();
 
 
-	
+
 	//今回のバリアはTransition
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	//Noneにしておく
@@ -374,12 +374,12 @@ void Engine::StateChange()
 
 void Engine::HandleClose()
 {
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 11; i++)
 	{
 		triangle_[i]->End();
 	}
 
-	vertexResource_->Release();
+	
 	graphicsPipelineState_->Release();
 	signatureBlob_->Release();
 	if (errorBlob_)

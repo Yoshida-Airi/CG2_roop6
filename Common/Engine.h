@@ -159,11 +159,7 @@ private:
 	/// </summary>
 	void VertexResource();
 
-	/// <summary>
-	/// リソースに書き込む
-	/// </summary>
-	void Resource(float x1, float y1, float x2, float y2, float x3, float y3);
-
+	
 	/// <summary>
 	/// 描画処理
 	/// </summary>
