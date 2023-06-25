@@ -379,7 +379,7 @@ void Engine::HandleClose()
 		triangle_[i]->End();
 	}
 
-	
+	vertexResource_->Release();
 	graphicsPipelineState_->Release();
 	signatureBlob_->Release();
 	if (errorBlob_)
