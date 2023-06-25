@@ -95,8 +95,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 	}
 
-	engine->End();
 	window->EndApp();
+	engine->End();
 	direct->End();
 	
 
