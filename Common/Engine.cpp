@@ -33,10 +33,6 @@ void Engine::Initialize()
 	//頂点データ
 	VertexResource();
 
-
-
-
-
 }
 
 void Engine::Run()
