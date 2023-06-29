@@ -83,6 +83,7 @@
   <ItemGroup>
     <ClCompile Include="3d\Triangle.cpp" />
     <ClCompile Include="Common\DirectX.cpp" />
+    <ClCompile Include="Common\Engine.cpp" />
     <ClCompile Include="Common\WindowAPI.cpp" />
     <ClCompile Include="ConvertString.cpp" />
     <ClCompile Include="main.cpp" />
@@ -90,8 +91,10 @@
   <ItemGroup>
     <ClInclude Include="3d\Triangle.h" />
     <ClInclude Include="Common\DirectX.h" />
+    <ClInclude Include="Common\Engine.h" />
     <ClInclude Include="Common\WindowAPI.h" />
     <ClInclude Include="ConvertString.h" />
+    <ClInclude Include="Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.PS.hlsl">
