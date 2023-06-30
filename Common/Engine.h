@@ -15,11 +15,13 @@
 #include"Triangle.h"
 #include "ConvertString.h"
 #include"Vector4.h"
+#include"CreateResource.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
+
 
 
 class Engine
@@ -174,5 +176,6 @@ private:
 	/// 解放処理
 	/// </summary>
 	void HandleClose();
+
 
 };

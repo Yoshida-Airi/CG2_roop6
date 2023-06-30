@@ -94,6 +94,7 @@
     <ClInclude Include="Common\Engine.h" />
     <ClInclude Include="Common\WindowAPI.h" />
     <ClInclude Include="ConvertString.h" />
+    <ClInclude Include="CreateResource.h" />
     <ClInclude Include="Vector4.h" />
   </ItemGroup>
   <ItemGroup>

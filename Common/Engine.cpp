@@ -152,8 +152,17 @@ void Engine::IntializeDXC()
 
 void Engine::CreateSignature()
 {
-
+	//RootSignature作成
 	descriptionRootSignature_.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	//RootParameter作成。複数設定できるので配列。今回は結果1つだけなので長さ1の配列
+	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixcelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
+	descriptionRootSignature_.pParameters = rootParameters;	//ルートパラメータ配列へのポインタ
+	descriptionRootSignature_.NumParameters = _countof(rootParameters);//配列の長さ
+
 	//シリアライズしてバイナリにする
 	hr_ = D3D12SerializeRootSignature(&descriptionRootSignature_, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob_, &errorBlob_);
 	if (FAILED(hr_))
@@ -228,26 +237,8 @@ void Engine::CreatePSO()
 void Engine::VertexResource()
 {
 
-	//頂点リソース用のヒープの設定
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;	//UplodeHeapを使う
-
-	//バッファリソース。テクスチャの場合は別の設定する
-	vertexResourceDesc_.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc_.Width = sizeof(Vector4) * 3;	//リソースのサイズ。今回はVector4を3頂点分
-	//バッファの場合はこれらは1にする決まり
-	vertexResourceDesc_.Height = 1;
-	vertexResourceDesc_.DepthOrArraySize = 1;
-	vertexResourceDesc_.MipLevels = 1;
-	vertexResourceDesc_.SampleDesc.Count = 1;
-	//バッファの場合はこれにする決まり
-	vertexResourceDesc_.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	hr_ = direct_->GetDevice()->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &vertexResourceDesc_, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResource_));
-
-	assert(SUCCEEDED(hr_));
-
-
+	//頂点リソースの設定
+	vertexResource_ = CreateBufferResource(direct_->GetDevice(), sizeof(Vector4) * 3);
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -265,9 +256,6 @@ void Engine::VertexResource()
 
 void Engine::Render()
 {
-
-
-
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport_.Width = static_cast<float>(winApp_.GetWidth());
 	viewport_.Height = static_cast<float>(winApp_.GetHeight());
@@ -315,13 +303,6 @@ void Engine::Render()
 	direct_->GetCommandList()->SetGraphicsRootSignature(rootSignature_);
 	direct_->GetCommandList()->SetPipelineState(graphicsPipelineState_);	//PSOを設定
 	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);	//VBVを設定
-
-
-	////形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけばよい
-	//direct_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	////描画！(DrawCall/ドローコール)。3頂点で1つのインスタンス。
-	//direct_->GetCommandList()->DrawInstanced(kVertexCountEngine, 1, static_cast<UINT>(indexVertex_), 0);
-
 
 
 }
@@ -376,6 +357,7 @@ void Engine::HandleClose()
 	}
 
 	vertexResource_->Release();
+	
 	graphicsPipelineState_->Release();
 	signatureBlob_->Release();
 	if (errorBlob_)
@@ -386,3 +368,5 @@ void Engine::HandleClose()
 	pixelShaderBlob_->Release();
 	vertexShaderBlob_->Release();
 }
+
+
