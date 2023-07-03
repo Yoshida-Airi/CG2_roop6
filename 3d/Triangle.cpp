@@ -7,13 +7,17 @@ void Triangle::Initialize(DirectX* direct)
 	SetMaterial();
 }
 
-void Triangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c) {
+void Triangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color)
+{
 	//左下
 	vertexData_[0] = a;
 	//上
 	vertexData_[1] = b;
 	//右下
 	vertexData_[2] = c;
+
+	//マテリアル(色)代入
+	materialData_[0] = color;
 
 	//VBVを設定
 	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -52,10 +56,6 @@ void Triangle::SetMaterial()
 {
 	//マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
 	materilResource_ = CreateBufferResource(direct_->GetDevice(), sizeof(Vector4));
-	//マテリアルにデータを書き込む
-	Vector4* materialData = nullptr;
 	//書き込むためのアドレスを取得
-	materilResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	//今回は赤を書き込んでみる
-	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+	materilResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 }

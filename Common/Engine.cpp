@@ -51,10 +51,10 @@ void Engine::End()
 	HandleClose();
 }
 
-void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c)
+void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color)
 {
 	triangleCount_++;
-	triangle_[triangleCount_]->Draw(a, b, c);
+	triangle_[triangleCount_]->Draw(a, b, c, color);
 	if (triangleCount_ >= 10)
 	{
 		triangleCount_ = 0;
