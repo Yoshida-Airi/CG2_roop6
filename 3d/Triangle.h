@@ -1,7 +1,9 @@
 #pragma once
 #include"DirectX.h"
 #include"Vector4.h"
+#include"MathUtility.h"
 #include"CreateResource.h"
+
 
 class MyEngine;
 
@@ -23,13 +25,16 @@ private:
 	Vector4* vertexData_;
 	ID3D12Resource* vertexResource_;	//頂点
 	ID3D12Resource* materilResource_;	//マテリアル
+	ID3D12Resource* wvpResource_;		//トランスフォーメーションマトリックス
+
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 
+	Transform transform_;
+	Matrix4x4* wvpData_;
 
 private:
 	void SetVertex();
-
 	void SetMaterial();
-
+	void SetWvp();
 
 };
