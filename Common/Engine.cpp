@@ -50,10 +50,10 @@ void Engine::End()
 	HandleClose();
 }
 
-void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c)
+void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color)
 {
 	triangleCount_++;
-	triangle_[triangleCount_]->Draw(a, b, c);
+	triangle_[triangleCount_]->Draw(a, b, c, color);
 	if (triangleCount_ >= 10)
 	{
 		triangleCount_ = 0;
@@ -173,7 +173,6 @@ void Engine::CreateSignature()
 		assert(false);
 	}
 
-	//バイナリをもとに生成
 	hr_ = direct_->GetDevice()->CreateRootSignature(0, signatureBlob_->GetBufferPointer(), signatureBlob_->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
 	assert(SUCCEEDED(hr_));
 }
@@ -360,7 +359,7 @@ void Engine::HandleClose()
 	}
 
 	vertexResource_->Release();
-	
+
 	graphicsPipelineState_->Release();
 	signatureBlob_->Release();
 	if (errorBlob_)
@@ -371,5 +370,4 @@ void Engine::HandleClose()
 	pixelShaderBlob_->Release();
 	vertexShaderBlob_->Release();
 }
-
 

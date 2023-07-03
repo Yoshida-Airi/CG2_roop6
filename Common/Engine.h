@@ -54,7 +54,7 @@ public:
 	/// <summary>
 	/// 三角形描画
 	/// </summary>
-	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c);
+	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c,const Vector4&color);
 
 	/// <summary>
 	/// 終了(解放処理)

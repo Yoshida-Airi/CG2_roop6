@@ -22,6 +22,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector4 data1[3];
 	Vector4 data2[3];
 	Vector4 data3[3];
+	Vector4 colorA = { 1.0f,0.0f,0.0f,1.0f };
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -34,6 +35,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector4 data4[3];
 	Vector4 data5[3];
 	Vector4 data6[3];
+	Vector4 colorB = { 1.0f,1.0f,0.0f,1.0f };
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -46,6 +48,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector4 data7[4];
 	Vector4 data8[4];
 	Vector4 data9[4];
+	Vector4 colorC = { 1.0f,0.0f,1.0f,1.0f };
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -75,19 +78,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			for (int i = 0; i < 3; i++)
 			{
 				//三角形描画
-				engine->DrawTriangle(data1[i], data2[i], data3[i]);
+				engine->DrawTriangle(data1[i], data2[i], data3[i], colorA);
 			}
 
 			for (int i = 0; i < 3; i++)
 			{
 				//三角形描画
-				engine->DrawTriangle(data4[i], data5[i], data6[i]);
+				engine->DrawTriangle(data4[i], data5[i], data6[i], colorB);
 			}
 
 			for (int i = 0; i < 4; i++)
 			{
 				//三角形描画
-				engine->DrawTriangle(data7[i], data8[i], data9[i]);
+				engine->DrawTriangle(data7[i], data8[i], data9[i], colorC);
 			}
 
 			engine->RunEnd();
