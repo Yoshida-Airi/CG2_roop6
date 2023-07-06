@@ -71,7 +71,9 @@ private:
 
 	int triangleCount_;	//三角形が描画されている数
 
-
+	Transform transform_;
+	Matrix4x4 worldMatrix_;
+	Vector4 rotate_;
 
 	HRESULT hr_;				//結果確認用
 	IDxcUtils* dxcUtils_ = nullptr;

@@ -12,7 +12,7 @@ class Triangle
 public:
 	void Initialize(DirectX* direct);
 
-	void Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color);
+	void Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color, const Matrix4x4& matrix);
 
 	void End();
 
@@ -32,8 +32,6 @@ private:
 	Vector4* materialData_;	//マテリアルにデータを書き込む
 	Matrix4x4* wvpData_;	//オブジェクトの位置をいじるためのデータ
 	Matrix4x4 worldMatrix_;
-
-	Transform transform_;	
 
 
 private:

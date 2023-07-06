@@ -1,22 +1,18 @@
 #include "Triangle.h"
 
+//******************************************//
+//			　パブリックメソッド		　		//
+//******************************************//
+
 void Triangle::Initialize(DirectX* direct)
 {
-	//Transform関数を作る
-	transform_ =
-	{
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,0.0f}
-	};
-
 	direct_ = direct;
 	SetVertex();
 	SetMaterial();
 	SetWvp();
 }
 
-void Triangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color)
+void Triangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color, const Matrix4x4& matrix)
 {
 	//左下
 	vertexData_[0] = a;
@@ -27,6 +23,8 @@ void Triangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const 
 
 	//マテリアル(色)代入
 	materialData_[0] = color;
+
+	*wvpData_ = matrix;
 
 	//VBVを設定
 	direct_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -39,12 +37,11 @@ void Triangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const 
 	//描画
 	direct_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 
-	transform_.rotate.y += 0.03f;
-	worldMatrix_ = MakeAffinMatrix(transform_.scale, transform_.rotate, transform_.translate);
-	*wvpData_ = worldMatrix_;
-
-
 }
+
+//******************************************//
+//			プライベートメソッド				//
+//******************************************//
 
 void Triangle::End()
 {

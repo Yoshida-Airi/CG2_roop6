@@ -14,6 +14,13 @@ Engine::~Engine()
 
 void Engine::Initialize()
 {
+	transform_ =
+	{
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,0.0f} 
+	};
+
 	IntializeDXC();
 	CreateSignature();
 	InputLayout();
@@ -53,11 +60,13 @@ void Engine::End()
 void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& color)
 {
 	triangleCount_++;
-	triangle_[triangleCount_]->Draw(a, b, c, color);
+	triangle_[triangleCount_]->Draw(a, b, c, color, worldMatrix_);
 	if (triangleCount_ >= 10)
 	{
 		triangleCount_ = 0;
 	}
+
+
 }
 
 //CompileShader関数
@@ -258,6 +267,9 @@ void Engine::VertexResource()
 
 void Engine::Render()
 {
+	transform_.rotate.y += 0.03f;
+	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport_.Width = static_cast<float>(winApp_.GetWidth());
 	viewport_.Height = static_cast<float>(winApp_.GetHeight());

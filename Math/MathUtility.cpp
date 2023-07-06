@@ -484,7 +484,7 @@ Matrix4x4 MakeRotateZMatrix(float radian)
 /*=====================================*/
 
 //3次元アフィン変換行列
-Matrix4x4 MakeAffinMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate)
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate)
 {
 	Matrix4x4 resultMakeAffinMatrix;
 	Matrix4x4 resultMakeScaleMatrix = MakeScaleMatrix(scale);

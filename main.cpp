@@ -19,7 +19,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	direct->Initialize(window->GetHwnd());
 	engine->Initialize();
 
-	Vector4 data1[3];
+	//一個三角形
+	Vector4 data1;
+	Vector4 data2;
+	Vector4 data3;
+
+	data1 = { -0.5f,-0.5f,0.0f,1.0f };
+	data2 = { 0.0f,0.5f,0.0f,1.0f };
+	data3 = { 0.5f,-0.5f,0.0f,1.0f };
+	Vector4 colorA = { 1.0f,0.0f,0.0f,1.0f };
+
+	//十個三角形
+	/*Vector4 data1[3];
 	Vector4 data2[3];
 	Vector4 data3[3];
 	Vector4 colorA = { 1.0f,0.0f,0.0f,1.0f };
@@ -56,7 +67,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		data7[i] = { -0.6f,-0.2f + (i * -0.5f),0.0f,2.0f };
 		data8[i] = { -0.4f,0.2f + (i * -0.5f),0.0f,2.0f };
 		data9[i] = { -0.2f,-0.2f + (i * -0.5f),0.0f,2.0f };
-	}
+	}*/
 
 	/*=====================================*/
 	/* 　　　　   メインループ　　    　       */
@@ -75,23 +86,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{
 			engine->Run();
 
-			for (int i = 0; i < 3; i++)
-			{
-				//三角形描画
-				engine->DrawTriangle(data1[i], data2[i], data3[i], colorA);
-			}
+			//一個描画
+			engine->DrawTriangle(data1, data2, data3, colorA);
 
-			for (int i = 0; i < 3; i++)
-			{
-				//三角形描画
-				engine->DrawTriangle(data4[i], data5[i], data6[i], colorB);
-			}
 
-			for (int i = 0; i < 4; i++)
-			{
-				//三角形描画
-				engine->DrawTriangle(data7[i], data8[i], data9[i], colorC);
-			}
+			//十個描画
+			//for (int i = 0; i < 3; i++)
+			//{
+			//	//三角形描画
+			//	engine->DrawTriangle(data1[i], data2[i], data3[i], colorA);
+			//}
+
+			//for (int i = 0; i < 3; i++)
+			//{
+			//	//三角形描画
+			//	engine->DrawTriangle(data4[i], data5[i], data6[i], colorB);
+			//}
+
+			//for (int i = 0; i < 4; i++)
+			//{
+			//	//三角形描画
+			//	engine->DrawTriangle(data7[i], data8[i], data9[i], colorC);
+			//}
 
 			engine->RunEnd();
 
